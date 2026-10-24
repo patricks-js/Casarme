@@ -11,8 +11,22 @@ public sealed class WeddingEvent
     public string? Description { get; set; }
     public string? Location { get; set; }
     public string? MapsUrl { get; set; }
-    public WeddingEventStatus Status { get; set; } = WeddingEventStatus.Draft;
+    public WeddingEventStatus Status { get; set; }
     public DateTimeOffset StartsAt { get; set; }
     public DateTimeOffset EndsAt { get; set; }
-    public DateTimeOffset RsvpDeadline { get; set; }
+    public DateTimeOffset? RsvpDeadline { get; set; }
+ 
+    public WeddingEvent(Guid weddingId, string title, string slug, string? description, string? location, string? mapsUrl, DateTimeOffset startsAt, DateTimeOffset endsAt, DateTimeOffset? rsvpDeadline)
+    {
+        WeddingId = weddingId;
+        Title = title;
+        Slug = slug;
+        Description = description;
+        Location = location;
+        MapsUrl = mapsUrl;
+        Status = WeddingEventStatus.Draft;
+        StartsAt = startsAt;
+        EndsAt = endsAt;
+        RsvpDeadline = rsvpDeadline;
+    }
 }
