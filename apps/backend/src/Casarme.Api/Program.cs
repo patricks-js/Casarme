@@ -26,12 +26,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 // Services
 builder.Services.AddScoped<WeddingService>();
 
 var app = builder.Build();
+
+// Unhandled exceptions become a bare 500 problem response, without leaking details
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {

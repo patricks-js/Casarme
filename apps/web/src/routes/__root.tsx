@@ -5,6 +5,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
+import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 
@@ -19,7 +20,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Casarme",
       },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
@@ -43,6 +44,7 @@ function RootDocument({ children }: Readonly<PropsWithChildren>) {
       </head>
       <body className="dark relative isolate min-h-dvh antialiased">
         {children}
+        <Toaster theme="dark" position="top-center" richColors />
         <Scripts />
       </body>
     </html>

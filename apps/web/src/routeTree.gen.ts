@@ -9,20 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as AppLayoutRouteImport } from "./routes/_app/layout";
 import { Route as AuthLayoutRouteImport } from "./routes/_auth/layout";
+import { Route as AppIndexRouteImport } from "./routes/_app/index";
 import { Route as AuthSignInRouteImport } from "./routes/_auth/sign-in";
 import { Route as AuthSignUpRouteImport } from "./routes/_auth/sign-up";
+import { Route as AppWeddingsNewRouteImport } from "./routes/_app/weddings/new";
 import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$";
+import { Route as AppWeddingsWeddingIdIndexRouteImport } from "./routes/_app/weddings/$weddingId/index";
+import { Route as AppWeddingsWeddingIdEditRouteImport } from "./routes/_app/weddings/$weddingId/edit";
 
-const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+const AppLayoutRoute = AppLayoutRouteImport.update({
+  id: "/_app",
   getParentRoute: () => rootRouteImport,
 } as any);
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: "/_auth",
   getParentRoute: () => rootRouteImport,
+} as any);
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => AppLayoutRoute,
 } as any);
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: "/sign-in",
@@ -34,59 +42,104 @@ const AuthSignUpRoute = AuthSignUpRouteImport.update({
   path: "/sign-up",
   getParentRoute: () => AuthLayoutRoute,
 } as any);
+const AppWeddingsNewRoute = AppWeddingsNewRouteImport.update({
+  id: "/weddings/new",
+  path: "/weddings/new",
+  getParentRoute: () => AppLayoutRoute,
+} as any);
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: "/api/auth/$",
   path: "/api/auth/$",
   getParentRoute: () => rootRouteImport,
 } as any);
+const AppWeddingsWeddingIdIndexRoute =
+  AppWeddingsWeddingIdIndexRouteImport.update({
+    id: "/weddings/$weddingId/",
+    path: "/weddings/$weddingId/",
+    getParentRoute: () => AppLayoutRoute,
+  } as any);
+const AppWeddingsWeddingIdEditRoute =
+  AppWeddingsWeddingIdEditRouteImport.update({
+    id: "/weddings/$weddingId/edit",
+    path: "/weddings/$weddingId/edit",
+    getParentRoute: () => AppLayoutRoute,
+  } as any);
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
+  "/": typeof AppIndexRoute;
   "/sign-in": typeof AuthSignInRoute;
   "/sign-up": typeof AuthSignUpRoute;
+  "/weddings/new": typeof AppWeddingsNewRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/weddings/$weddingId/edit": typeof AppWeddingsWeddingIdEditRoute;
+  "/weddings/$weddingId/": typeof AppWeddingsWeddingIdIndexRoute;
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
+  "/": typeof AppIndexRoute;
   "/sign-in": typeof AuthSignInRoute;
   "/sign-up": typeof AuthSignUpRoute;
+  "/weddings/new": typeof AppWeddingsNewRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/weddings/$weddingId/edit": typeof AppWeddingsWeddingIdEditRoute;
+  "/weddings/$weddingId": typeof AppWeddingsWeddingIdIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
+  "/_app": typeof AppLayoutRouteWithChildren;
   "/_auth": typeof AuthLayoutRouteWithChildren;
   "/_auth/sign-in": typeof AuthSignInRoute;
   "/_auth/sign-up": typeof AuthSignUpRoute;
+  "/_app/": typeof AppIndexRoute;
+  "/_app/weddings/new": typeof AppWeddingsNewRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/_app/weddings/$weddingId/edit": typeof AppWeddingsWeddingIdEditRoute;
+  "/_app/weddings/$weddingId/": typeof AppWeddingsWeddingIdIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/sign-in" | "/sign-up" | "/api/auth/$";
+  fullPaths:
+    | "/"
+    | "/sign-in"
+    | "/sign-up"
+    | "/weddings/new"
+    | "/api/auth/$"
+    | "/weddings/$weddingId/edit"
+    | "/weddings/$weddingId/";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/sign-in" | "/sign-up" | "/api/auth/$";
+  to:
+    | "/"
+    | "/sign-in"
+    | "/sign-up"
+    | "/weddings/new"
+    | "/api/auth/$"
+    | "/weddings/$weddingId/edit"
+    | "/weddings/$weddingId";
   id:
     | "__root__"
-    | "/"
+    | "/_app"
     | "/_auth"
     | "/_auth/sign-in"
     | "/_auth/sign-up"
-    | "/api/auth/$";
+    | "/_app/"
+    | "/_app/weddings/new"
+    | "/api/auth/$"
+    | "/_app/weddings/$weddingId/edit"
+    | "/_app/weddings/$weddingId/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
+  AppLayoutRoute: typeof AppLayoutRouteWithChildren;
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren;
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
+    "/_app": {
+      id: "/_app";
+      path: "";
       fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
+      preLoaderRoute: typeof AppLayoutRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     "/_auth": {
@@ -95,6 +148,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/";
       preLoaderRoute: typeof AuthLayoutRouteImport;
       parentRoute: typeof rootRouteImport;
+    };
+    "/_app/": {
+      id: "/_app/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof AppIndexRouteImport;
+      parentRoute: typeof AppLayoutRoute;
     };
     "/_auth/sign-in": {
       id: "/_auth/sign-in";
@@ -110,6 +170,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthSignUpRouteImport;
       parentRoute: typeof AuthLayoutRoute;
     };
+    "/_app/weddings/new": {
+      id: "/_app/weddings/new";
+      path: "/weddings/new";
+      fullPath: "/weddings/new";
+      preLoaderRoute: typeof AppWeddingsNewRouteImport;
+      parentRoute: typeof AppLayoutRoute;
+    };
     "/api/auth/$": {
       id: "/api/auth/$";
       path: "/api/auth/$";
@@ -117,8 +184,40 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiAuthSplatRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/_app/weddings/$weddingId/": {
+      id: "/_app/weddings/$weddingId/";
+      path: "/weddings/$weddingId";
+      fullPath: "/weddings/$weddingId/";
+      preLoaderRoute: typeof AppWeddingsWeddingIdIndexRouteImport;
+      parentRoute: typeof AppLayoutRoute;
+    };
+    "/_app/weddings/$weddingId/edit": {
+      id: "/_app/weddings/$weddingId/edit";
+      path: "/weddings/$weddingId/edit";
+      fullPath: "/weddings/$weddingId/edit";
+      preLoaderRoute: typeof AppWeddingsWeddingIdEditRouteImport;
+      parentRoute: typeof AppLayoutRoute;
+    };
   }
 }
+
+interface AppLayoutRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute;
+  AppWeddingsNewRoute: typeof AppWeddingsNewRoute;
+  AppWeddingsWeddingIdEditRoute: typeof AppWeddingsWeddingIdEditRoute;
+  AppWeddingsWeddingIdIndexRoute: typeof AppWeddingsWeddingIdIndexRoute;
+}
+
+const AppLayoutRouteChildren: AppLayoutRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+  AppWeddingsNewRoute: AppWeddingsNewRoute,
+  AppWeddingsWeddingIdEditRoute: AppWeddingsWeddingIdEditRoute,
+  AppWeddingsWeddingIdIndexRoute: AppWeddingsWeddingIdIndexRoute,
+};
+
+const AppLayoutRouteWithChildren = AppLayoutRoute._addFileChildren(
+  AppLayoutRouteChildren,
+);
 
 interface AuthLayoutRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute;
@@ -135,7 +234,7 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 );
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppLayoutRoute: AppLayoutRouteWithChildren,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 };

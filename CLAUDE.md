@@ -46,11 +46,12 @@ In Development the OpenAPI doc and Scalar UI are served at `/openapi`. No test p
   - Endpoints map request records (`CreateWeddingRequest`) to command records (`CreateWeddingCommand`) and add the caller's owner id.
   - Services take commands and query `AppDbContext` directly. Request and command records are declared at the bottom of the endpoint and service files.
 - **Error convention**: services signal outcomes with exceptions, and endpoints translate them to HTTP results:
-  - `ArgumentException`/`ArgumentOutOfRangeException` → 400
+  - `ArgumentException`/`ArgumentOutOfRangeException` → 400, body `{ error, field }` with `field` = the exception's `ParamName` so the web form can flag the input
   - `KeyNotFoundException` → 404
   - `InvalidOperationException` (e.g. duplicate slug) → 409
+  - anything else bubbles up to `UseExceptionHandler` + ProblemDetails (bare 500, no details); endpoints don't catch `Exception`
 - **Auth / multi-tenancy**: JWT bearer; tokens are meant to be issued by the web app's better-auth `jwt` plugin (dev issuer `http://localhost:3000`, audience `http://localhost:5264`). `ICurrentUser` (`Common/`) reads `sub`/`email` claims. Every endpoint parses `currentUser.Id` as a `Guid` owner id and scopes queries by `OwnerId`, so access control is ownership filtering in the service queries. JWT issuer/audience and `Authentication:JwksUrl` come from `appsettings*.json` (`casarme.app` in prod). better-auth has no OIDC discovery document, so `Common/JwksRetriever.cs` loads signing keys straight from its JWKS endpoint. Keys must be ES256: better-auth defaults to EdDSA, which Microsoft.IdentityModel can't verify.
-- **Entities** (`Entities/`): constructor-initialized classes with `Guid.CreateVersion7()` ids. Mutations go through methods like `Wedding.Update(...)`. `Slug` has a private setter and must be unique; uniqueness is checked in the service. `AppDbContext` has no Fluent configuration yet, so EF conventions apply.
+- **Entities** (`Entities/`): constructor-initialized classes with `Guid.CreateVersion7()` ids. Mutations go through methods like `Wedding.Update(...)`. `Slug` has a private setter. Shared limits/format live in `WeddingRules` (mirrored in web `src/lib/wedding.ts`). Response shapes are records in `DTOs/`; services return those, never entities. Entities implementing `IHasTimestamps` get `CreatedAt`/`UpdatedAt` set in `AppDbContext.SaveChangesAsync` (NFR-03). Fluent config in `OnModelCreating` adds unique indexes on `Weddings.Slug` (BR-01) and `Weddings.OwnerId` (MVP rule: one wedding per user); services pre-check both and also map Postgres unique violations to 409.
 
 ## Web architecture
 
@@ -61,7 +62,7 @@ In Development the OpenAPI doc and Scalar UI are served at `/openapi`. No test p
 - **Auth**: `src/lib/auth/server.ts` configures better-auth with the Drizzle adapter (table mapping to `schema.ts`), email/password using `Bun.password`, UUIDv7 ids, and plugins `jwt` (issues tokens for the .NET API), `openAPI`, `tanstackStartCookies`. `src/routes/api/auth/$.ts` forwards GET/POST to `auth.handler`. `src/lib/auth/client.ts` is the browser client (with `jwtClient`).
 - **Server functions** (`createServerFn`) live in `src/functions/`, one file per domain named `<domain>.functions.ts` (e.g. `auth.functions.ts` with `getSession`/`ensureSession`).
 - **Calling the .NET API**: done from server functions (the API has no CORS). Mint a JWT with `auth.api.getToken({ headers })` and send it as `Authorization: Bearer` to `env.API_URL` (see `user.functions.ts`).
-- **Route groups**: `src/routes/_auth/` is a pathless group for sign-in/sign-up; its `layout.tsx` redirects to `/` when a session already exists (`beforeLoad` + `getSession`). Forms use TanStack Form with zod schemas and the shadcn `Field` components.
+- **Route groups**: `src/routes/_auth/` is a pathless group for sign-in/sign-up; its `layout.tsx` redirects to `/` when a session already exists (`beforeLoad` + `getSession`). `src/routes/_app/` is the signed-in area: its layout redirects to `/sign-in` without a session, and `/` sends the user to `/weddings/new` or to their wedding space `/weddings/$weddingId`. Toasts use `sonner` (`toast` from `sonner`, `<Toaster>` in `__root.tsx`). Forms use TanStack Form with zod schemas and the shadcn `Field` components.
 - Bun installs exact versions (`bunfig.toml`: `exact = true`).
 
 ## Project management
@@ -70,5 +71,5 @@ Work is tracked as GitHub issues in `patricks-js/Casarme`, linked to the "Casarm
 
 ## Current state / known gaps
 
-- Web UI so far: sign-in/sign-up and a home page that greets the user via the API's `/me`. No protected-route layout yet.
+- Web UI so far: sign-in/sign-up, and wedding registration/space/edit (`_app/weddings/`). The `_app` guard is minimal: no redirect-back or logout yet (issue #4).
 - `WeddingEventService` exists but isn't registered in DI and has no endpoints. Its entity file is misnamed `WeedingEvent.cs`.
