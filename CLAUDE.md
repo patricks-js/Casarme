@@ -1,0 +1,69 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+> NEVER MAKE COMMIT MESSAGES WITH CLAUDE AS CO-AUTHOR; KEEP COMMIT MESSAGES SIMPLE
+
+## Project
+
+Casarme is a wedding-organization platform: couples manage weddings, multiple events per wedding, guests grouped into invitations, per-event RSVP, and QR-code check-in. The product spec lives in `docs/PRD.md` (in Portuguese). It defines the MVP scope checklist, functional requirements (`FR-xx`), and business rules (`BR-xx`). Check it before implementing domain features, and keep the scope checklist in sync as features land.
+
+Monorepo layout:
+
+- `apps/backend`: ASP.NET Core (.NET 10) minimal API with EF Core + PostgreSQL (`Casarme.slnx` → `src/Casarme.Api`)
+- `apps/web`: TanStack Start (React 19, Vite, Tailwind v4, shadcn/base-ui) app using Bun, with better-auth + Drizzle for sign-in
+- `docker-compose.yaml`: local Postgres 18 (`casarme_db`, user/password `postgres`, port 5432)
+
+## Commands
+
+```sh
+# Database
+podman-compose up -d db
+
+# Backend (from apps/backend)
+dotnet build
+dotnet run --project src/Casarme.Api                # http://localhost:5264 (https profile: 7222)
+dotnet ef migrations add <Name> --project src/Casarme.Api --output-dir Data/Migrations
+dotnet ef database update --project src/Casarme.Api
+
+# Web (from apps/web)
+bun install
+bun run dev      # http://localhost:3000
+bun run build
+bun run db:generate   # drizzle-kit: generate SQL migration from src/db/schema.ts into drizzle/
+bun run db:migrate    # apply drizzle migrations
+```
+
+Formatting: `bun fmt` in `apps/web` (config in `bunfig.toml` `[fmt]`), `dotnet format` in `apps/backend` (rules in `apps/backend/.editorconfig`). Git hooks run via lefthook (`lefthook.yml`, run `lefthook install` once): pre-commit formats staged files, pre-push runs format check + typecheck/build. Each command only runs for the app whose files changed.
+
+In Development the OpenAPI doc and Scalar UI are served at `/openapi`. No test projects or lint config exist yet.
+
+## Backend architecture
+
+- **Composition**: `Program.cs` wires everything. Services are registered by hand (`AddScoped<WeddingService>()`), so a new service needs a registration line there. Endpoint groups are extension methods (`MapWeddingEndpoint`) in `Endpoints/`, called from `Program.cs`.
+- **Layering**: Endpoint → Service → `AppDbContext`, with no repository layer.
+  - Endpoints map request records (`CreateWeddingRequest`) to command records (`CreateWeddingCommand`) and add the caller's owner id.
+  - Services take commands and query `AppDbContext` directly. Request and command records are declared at the bottom of the endpoint and service files.
+- **Error convention**: services signal outcomes with exceptions, and endpoints translate them to HTTP results:
+  - `ArgumentException`/`ArgumentOutOfRangeException` → 400
+  - `KeyNotFoundException` → 404
+  - `InvalidOperationException` (e.g. duplicate slug) → 409
+- **Auth / multi-tenancy**: JWT bearer; tokens are meant to be issued by the web app's better-auth `jwt` plugin (dev issuer `http://localhost:3000`, audience `http://localhost:5264`). `ICurrentUser` (`Common/`) reads `sub`/`email` claims. Every endpoint parses `currentUser.Id` as a `Guid` owner id and scopes queries by `OwnerId`, so access control is ownership filtering in the service queries. JWT issuer/audience and `Authentication:JwksUrl` come from `appsettings*.json` (`casarme.app` in prod). better-auth has no OIDC discovery document, so `Common/JwksRetriever.cs` loads signing keys straight from its JWKS endpoint. Keys must be ES256: better-auth defaults to EdDSA, which Microsoft.IdentityModel can't verify.
+- **Entities** (`Entities/`): constructor-initialized classes with `Guid.CreateVersion7()` ids. Mutations go through methods like `Wedding.Update(...)`. `Slug` has a private setter and must be unique; uniqueness is checked in the service. `AppDbContext` has no Fluent configuration yet, so EF conventions apply.
+
+## Web architecture
+
+- TanStack Start file-based routing in `src/routes/`, with the route tree generated into `src/routeTree.gen.ts` (don't edit it by hand). The Vite plugin is configured with `routeToken: "layout.tsx"`.
+- Import alias `#*` → `src/*` (`package.json` `imports`); imports include the extension, e.g. `#lib/env/server.ts`, `#components/ui/button.tsx`. shadcn aliases in `components.json` follow the same scheme. Icons: Tabler.
+- **Env**: validated with `@t3-oss/env-core` + zod. `src/lib/env/server.ts` (`DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `API_URL`, read from `Bun.env`) and `src/lib/env/client.ts` (`VITE_API_URL`). Values live in `apps/web/.env` (gitignored).
+- **Database**: Drizzle ORM (`drizzle-orm/bun-sql`, v1 RC with `defineRelations`) on the same Postgres as the backend. Schema in `src/db/schema.ts` uses `snakeCase.schema("auth")`, so web-owned tables live in the `auth` Postgres schema while EF Core owns the `public` tables. Drizzle migrations go to `drizzle/`.
+- **Auth**: `src/lib/auth/server.ts` configures better-auth with the Drizzle adapter (table mapping to `schema.ts`), email/password using `Bun.password`, UUIDv7 ids, and plugins `jwt` (issues tokens for the .NET API), `openAPI`, `tanstackStartCookies`. `src/routes/api/auth/$.ts` forwards GET/POST to `auth.handler`. `src/lib/auth/client.ts` is the browser client (with `jwtClient`).
+- **Server functions** (`createServerFn`) live in `src/functions/`, one file per domain named `<domain>.functions.ts` (e.g. `auth.functions.ts` with `getSession`/`ensureSession`).
+- **Calling the .NET API**: done from server functions (the API has no CORS). Mint a JWT with `auth.api.getToken({ headers })` and send it as `Authorization: Bearer` to `env.API_URL` (see `user.functions.ts`).
+- **Route groups**: `src/routes/_auth/` is a pathless group for sign-in/sign-up; its `layout.tsx` redirects to `/` when a session already exists (`beforeLoad` + `getSession`). Forms use TanStack Form with zod schemas and the shadcn `Field` components.
+- Bun installs exact versions (`bunfig.toml`: `exact = true`).
+
+## Current state / known gaps
+
+- `apps/web` is still untracked scaffolding; no UI beyond a placeholder home page.
+- `WeddingEventService` exists but isn't registered in DI and has no endpoints. Its entity file is misnamed `WeedingEvent.cs`.
