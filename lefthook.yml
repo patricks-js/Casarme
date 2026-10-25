@@ -1,0 +1,30 @@
+# Each command only runs when the commit/push touches files under its root.
+pre-commit:
+  parallel: true
+  commands:
+    web-fmt:
+      root: "apps/web/"
+      glob: "*.{ts,tsx,js,css,json,md}"
+      # formats and re-stages only staged files under apps/web
+      run: bun fmt --staged
+    backend-fmt:
+      root: "apps/backend/"
+      glob: "*.cs"
+      # whitespace only: no MSBuild load, ~1s
+      run: dotnet format whitespace --folder --include {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  # glob/root only filter pre-push commands against an explicit file list;
+  # new branches have no @{push} yet, so fall back to diffing against main
+  files: "git diff --name-only @{push} HEAD 2>/dev/null || git diff --name-only origin/main HEAD"
+  commands:
+    web-check:
+      root: "apps/web/"
+      glob: "*.{ts,tsx,js,css,json,md}"
+      run: bun fmt --check && bunx tsc --noEmit
+    backend-check:
+      root: "apps/backend/"
+      glob: "*.{cs,csproj,slnx,json}"
+      run: dotnet format --verify-no-changes && dotnet build --nologo
