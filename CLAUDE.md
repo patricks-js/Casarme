@@ -53,7 +53,7 @@ In Development the OpenAPI doc and Scalar UI are served at `/openapi`. No test p
 
 ## Web architecture
 
-- TanStack Start file-based routing in `src/routes/`, with the route tree generated into `src/routeTree.gen.ts` (don't edit it by hand). The Vite plugin is configured with `routeToken: "layout.tsx"`.
+- TanStack Start file-based routing in `src/routes/`, with the route tree generated into `src/routeTree.gen.ts` (don't edit it by hand). The Vite plugin uses `routeToken: "layout"`, so a folder's `layout.tsx` is its layout route (the token is matched against the file name without extension).
 - Import alias `#*` → `src/*` (`package.json` `imports`); imports include the extension, e.g. `#lib/env/server.ts`, `#components/ui/button.tsx`. shadcn aliases in `components.json` follow the same scheme. Icons: Tabler.
 - **Env**: validated with `@t3-oss/env-core` + zod. `src/lib/env/server.ts` (`DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `API_URL`, read from `Bun.env`) and `src/lib/env/client.ts` (`VITE_API_URL`). Values live in `apps/web/.env` (gitignored).
 - **Database**: Drizzle ORM (`drizzle-orm/bun-sql`, v1 RC with `defineRelations`) on the same Postgres as the backend. Schema in `src/db/schema.ts` uses `snakeCase.schema("auth")`, so web-owned tables live in the `auth` Postgres schema while EF Core owns the `public` tables. Drizzle migrations go to `drizzle/`.
@@ -63,7 +63,11 @@ In Development the OpenAPI doc and Scalar UI are served at `/openapi`. No test p
 - **Route groups**: `src/routes/_auth/` is a pathless group for sign-in/sign-up; its `layout.tsx` redirects to `/` when a session already exists (`beforeLoad` + `getSession`). Forms use TanStack Form with zod schemas and the shadcn `Field` components.
 - Bun installs exact versions (`bunfig.toml`: `exact = true`).
 
+## Project management
+
+Work is tracked as GitHub issues in `patricks-js/Casarme`, linked to the "Casarme Project" board (user project #7) with Priority and Size fields. Use the `creating-github-issues` skill to open new tickets.
+
 ## Current state / known gaps
 
-- `apps/web` is still untracked scaffolding; no UI beyond a placeholder home page.
+- Web UI so far: sign-in/sign-up and a home page that greets the user via the API's `/me`. No protected-route layout yet.
 - `WeddingEventService` exists but isn't registered in DI and has no endpoints. Its entity file is misnamed `WeedingEvent.cs`.

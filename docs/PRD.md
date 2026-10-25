@@ -26,7 +26,7 @@ A proposta de valor do produto é **permitir que o casal organize convidados e e
 
 ### 5.1 Dentro do Escopo
 
-- [x] **Feature 1**: Autenticação simples (ex: Social sign-in com Google).
+- [x] **Feature 1**: Autenticação simples com e-mail e senha.
 - [x] **Feature 2**: Cadastro do casamento.
 - [ ] **Feature 3**: Cadastro de múltiplos eventos vinculados ao casamento.
 - [ ] **Feature 4**: Cadastro manual e importação de convidados via planilha.
@@ -42,6 +42,7 @@ A proposta de valor do produto é **permitir que o casal organize convidados e e
 
 ### 5.2 Fora do Escopo
 
+- ❌ Login social (ex: Google).
 - ❌ Marketplace de fornecedores.
 - ❌ Sistema avançado de permissões para cerimonialista/organizadores à gestão (RBAC).
 - ❌ Aplicativo mobile nativo.
