@@ -28,25 +28,40 @@ namespace Casarme.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("PartnerOneName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("PartnerTwoName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateOnly>("PrimaryDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Weddings");
                 });
@@ -69,7 +84,7 @@ namespace Casarme.Api.Data.Migrations
                     b.Property<string>("MapsUrl")
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("RsvpDeadline")
+                    b.Property<DateTimeOffset?>("RsvpDeadline")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Slug")

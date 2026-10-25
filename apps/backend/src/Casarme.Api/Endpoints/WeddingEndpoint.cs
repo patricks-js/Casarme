@@ -13,7 +13,8 @@ public static class WeddingEndpoint
 
         group.MapPost("/", CreateWeddingAsync);
         group.MapGet("/", ListWeddingsAsync);
-        group.MapGet("/{id:guid}", GetWeddingByIdAsync);
+        group.MapGet("/slug-availability", CheckSlugAvailabilityAsync);
+        group.MapGet("/{id:guid}", GetWeddingByIdAsync).WithName("GetWeddingById");
         group.MapPut("/{id:guid}", UpdateWeddingAsync);
         group.MapDelete("/{id:guid}", DeleteWeddingAsync);
 
@@ -38,20 +39,16 @@ public static class WeddingEndpoint
 
         try
         {
-            var id = await service.CreateWeddingAsync(command, ct);
-            return TypedResults.CreatedAtRoute("GetWeddingById", new { id });
+            var wedding = await service.CreateWeddingAsync(command, ct);
+            return TypedResults.CreatedAtRoute(wedding, "GetWeddingById", new { id = wedding.Id });
         }
         catch (ArgumentException ex)
         {
-            return TypedResults.BadRequest(new { error = ex.Message });
+            return BadRequest(ex);
         }
         catch (InvalidOperationException ex)
         {
             return TypedResults.Conflict(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return TypedResults.InternalServerError(new { error = ex.Message });
         }
     }
 
@@ -82,6 +79,26 @@ public static class WeddingEndpoint
         return TypedResults.Ok(list);
     }
 
+    private static async Task<IResult> CheckSlugAvailabilityAsync(
+        string slug,
+        ICurrentUser currentUser,
+        WeddingService service,
+        CancellationToken ct)
+    {
+        if (!Guid.TryParse(currentUser.Id, out var ownerId))
+            return TypedResults.Unauthorized();
+
+        try
+        {
+            var availability = await service.CheckSlugAvailabilityAsync(slug, ownerId, ct);
+            return TypedResults.Ok(availability);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+
     private static async Task<IResult> UpdateWeddingAsync(
         Guid id,
         UpdateWeddingRequest request,
@@ -110,9 +127,9 @@ public static class WeddingEndpoint
         {
             return TypedResults.NotFound();
         }
-        catch (ArgumentOutOfRangeException ex)
+        catch (ArgumentException ex)
         {
-            return TypedResults.BadRequest(new { error = ex.Message });
+            return BadRequest(ex);
         }
         catch (InvalidOperationException ex)
         {
@@ -139,6 +156,10 @@ public static class WeddingEndpoint
             return TypedResults.NotFound();
         }
     }
+
+    // `field` lets the web app attach the error to the right form input
+    private static IResult BadRequest(ArgumentException ex) =>
+        TypedResults.BadRequest(new { error = ex.Message, field = ex.ParamName });
 }
 
 public sealed record CreateWeddingRequest(string PartnerOneName, string PartnerTwoName, string Slug, DateOnly PrimaryDate);
