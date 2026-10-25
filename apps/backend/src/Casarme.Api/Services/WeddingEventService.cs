@@ -22,10 +22,10 @@ public sealed class WeddingEventService(AppDbContext db)
             command.StartsAt,
             command.EndsAt,
             command.RsvpDeadline);
-        
+
         db.WeddingsEvents.Add(weddingEvent);
         await db.SaveChangesAsync(ct);
-        
+
         return weddingEvent.WeddingId;
     }
 }

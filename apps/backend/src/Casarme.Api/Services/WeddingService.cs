@@ -11,18 +11,18 @@ public sealed class WeddingService(AppDbContext dbContext)
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         if (command.PrimaryDate <= today)
             throw new ArgumentOutOfRangeException(nameof(command.PrimaryDate), "Primary date must be a future date");
-        
+
         var slugExists = await dbContext.Weddings.AnyAsync(x => x.Slug == command.Slug, ct);
         if (slugExists)
             throw new InvalidOperationException($"The slug '{command.Slug}' is already in use");
-        
+
         var wedding = new Wedding(
-            command.OwnerId, 
+            command.OwnerId,
             command.PartnerOneName,
             command.PartnerTwoName,
             command.Slug,
             command.PrimaryDate);
-        
+
         dbContext.Weddings.Add(wedding);
         await dbContext.SaveChangesAsync(ct);
 
@@ -58,12 +58,12 @@ public sealed class WeddingService(AppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == command.WeddingId && x.OwnerId == command.OwnerId, ct);
         if (wedding is null)
             throw new KeyNotFoundException($"Wedding with id {command.WeddingId} not found");
-        
+
         var slugConflict = await dbContext.Weddings
             .AnyAsync(x => x.Slug == command.Slug && x.Id != command.WeddingId, ct);
         if (slugConflict)
             throw new InvalidOperationException($"The slug '{command.Slug}' is already in use");
-        
+
         wedding.Update(command.PartnerOneName, command.PartnerTwoName, command.Slug, command.PrimaryDate);
         await dbContext.SaveChangesAsync(ct);
     }

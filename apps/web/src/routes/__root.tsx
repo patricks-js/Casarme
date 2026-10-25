@@ -41,7 +41,7 @@ function RootDocument({ children }: Readonly<PropsWithChildren>) {
       <head>
         <HeadContent />
       </head>
-      <body className="relative isolate min-h-dvh antialiased dark">
+      <body className="dark relative isolate min-h-dvh antialiased">
         {children}
         <Scripts />
       </body>

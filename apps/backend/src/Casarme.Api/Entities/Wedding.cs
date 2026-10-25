@@ -8,7 +8,7 @@ public sealed class Wedding
     public string PartnerTwoName { get; set; }
     public string Slug { get; private set; }
     public DateOnly PrimaryDate { get; set; }
-    
+
     public Wedding(Guid ownerId, string partnerOneName, string partnerTwoName, string slug, DateOnly primaryDate)
     {
         OwnerId = ownerId;

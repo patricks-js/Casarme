@@ -16,7 +16,7 @@ public static class WeddingEndpoint
         group.MapGet("/{id:guid}", GetWeddingByIdAsync);
         group.MapPut("/{id:guid}", UpdateWeddingAsync);
         group.MapDelete("/{id:guid}", DeleteWeddingAsync);
-        
+
         return endpoints;
     }
 
@@ -63,13 +63,13 @@ public static class WeddingEndpoint
     {
         if (!Guid.TryParse(currentUser.Id, out var ownerId))
             return TypedResults.Unauthorized();
-        
+
         var wedding = await service.GetByIdAsync(id, ownerId, ct);
-        return wedding is not null 
-            ? TypedResults.Ok(wedding) 
+        return wedding is not null
+            ? TypedResults.Ok(wedding)
             : TypedResults.NotFound();
     }
-    
+
     private static async Task<IResult> ListWeddingsAsync(
         ICurrentUser currentUser,
         WeddingService service,
