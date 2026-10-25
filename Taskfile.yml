@@ -1,0 +1,196 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  # override with `COMPOSE="docker compose" task db:up`
+  COMPOSE: '{{.COMPOSE | default "podman-compose"}}'
+  API_PROJECT: src/Casarme.Api
+
+tasks:
+  default:
+    desc: List available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  setup:
+    desc: Install deps, git hooks, start the database and apply all migrations
+    cmds:
+      - lefthook install
+      - task: web:install
+      - task: api:restore
+      - task: db:up
+      - task: migrate
+
+  dev:
+    desc: Start the database, then run the API and web app together
+    cmds:
+      - task: db:up
+      - task: dev:apps
+
+  dev:apps:
+    internal: true
+    deps: [api:dev, web:dev]
+
+  migrate:
+    desc: Apply EF Core (public schema) and Drizzle (auth schema) migrations
+    cmds:
+      - task: api:db:update
+      - task: web:db:migrate
+
+  fmt:
+    desc: Format backend and web
+    deps: [api:fmt, web:fmt]
+
+  check:
+    desc: Same checks as the pre-push hook (format check, typecheck, build)
+    deps: [api:check, web:check]
+
+  # ---------- Database ----------
+
+  db:up:
+    desc: Start Postgres in the background and wait until it accepts connections
+    cmds:
+      - "{{.COMPOSE}} up -d db"
+      - until {{.COMPOSE}} exec db pg_isready -U postgres -q; do sleep 1; done
+
+  db:down:
+    desc: Stop Postgres (keeps data)
+    cmds:
+      - "{{.COMPOSE}} down"
+
+  db:logs:
+    desc: Follow Postgres logs
+    cmds:
+      - "{{.COMPOSE}} logs -f db"
+
+  db:psql:
+    desc: Open a psql shell on casarme_db
+    interactive: true
+    cmds:
+      - "{{.COMPOSE}} exec db psql -U postgres -d casarme_db"
+
+  db:reset:
+    desc: Drop the database volume, recreate it and re-run all migrations
+    prompt: This deletes all local database data. Continue?
+    cmds:
+      - "{{.COMPOSE}} down -v"
+      - task: db:up
+      - task: migrate
+
+  # ---------- Backend (.NET API) ----------
+
+  api:restore:
+    desc: Restore NuGet packages
+    dir: apps/backend
+    cmds:
+      - dotnet restore
+
+  api:dev:
+    desc: Run the API with hot reload (http://localhost:5264)
+    dir: apps/backend
+    cmds:
+      - dotnet watch --project {{.API_PROJECT}}
+
+  api:run:
+    desc: Run the API without hot reload
+    dir: apps/backend
+    cmds:
+      - dotnet run --project {{.API_PROJECT}}
+
+  api:build:
+    desc: Build the backend solution
+    dir: apps/backend
+    cmds:
+      - dotnet build --nologo
+
+  api:fmt:
+    desc: Format backend code
+    dir: apps/backend
+    cmds:
+      - dotnet format
+
+  api:check:
+    desc: Verify formatting and build the backend
+    dir: apps/backend
+    cmds:
+      - dotnet format --verify-no-changes
+      - dotnet build --nologo
+
+  api:migration:
+    desc: "Add an EF Core migration (task api:migration NAME=AddSomething)"
+    dir: apps/backend
+    requires:
+      vars: [NAME]
+    cmds:
+      - dotnet ef migrations add {{.NAME}} --project {{.API_PROJECT}} --output-dir Data/Migrations
+
+  api:migration:remove:
+    desc: Remove the last EF Core migration (if not applied)
+    dir: apps/backend
+    cmds:
+      - dotnet ef migrations remove --project {{.API_PROJECT}}
+
+  api:db:update:
+    desc: Apply EF Core migrations
+    dir: apps/backend
+    cmds:
+      - dotnet ef database update --project {{.API_PROJECT}}
+
+  # ---------- Web (TanStack Start) ----------
+
+  web:install:
+    desc: Install web dependencies
+    dir: apps/web
+    cmds:
+      - bun install
+
+  web:dev:
+    desc: Run the web app (http://localhost:3000)
+    dir: apps/web
+    cmds:
+      - bun run dev
+
+  web:build:
+    desc: Build the web app
+    dir: apps/web
+    cmds:
+      - bun run build
+
+  web:fmt:
+    desc: Format web code
+    dir: apps/web
+    cmds:
+      - bun fmt
+
+  web:typecheck:
+    desc: Typecheck the web app
+    dir: apps/web
+    cmds:
+      - bunx tsc --noEmit
+
+  web:check:
+    desc: Verify formatting and typecheck the web app
+    dir: apps/web
+    cmds:
+      - bun fmt --check
+      - task: web:typecheck
+
+  web:db:generate:
+    desc: Generate a Drizzle migration from src/db/schema.ts
+    dir: apps/web
+    cmds:
+      - bun run db:generate
+
+  web:db:migrate:
+    desc: Apply Drizzle migrations
+    dir: apps/web
+    cmds:
+      - bun run db:migrate
+
+  web:ui:add:
+    desc: "Add shadcn components (task web:ui:add -- button dialog)"
+    dir: apps/web
+    cmds:
+      - bun run ui add {{.CLI_ARGS}}

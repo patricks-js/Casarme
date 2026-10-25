@@ -16,23 +16,24 @@ Monorepo layout:
 
 ## Commands
 
+Common commands are wrapped in the root `Taskfile.yml` ([go-task](https://taskfile.dev)); run `task` to list them all.
+
 ```sh
-# Database
-podman-compose up -d db
+task setup      # lefthook install, bun install, dotnet restore, start db, apply all migrations
+task dev        # start db, then API (dotnet watch, http://localhost:5264) + web (http://localhost:3000) in parallel
+task migrate    # apply EF Core (public schema) + Drizzle (auth schema) migrations
+task fmt        # format backend and web
+task check      # same checks as the pre-push hook
 
-# Backend (from apps/backend)
-dotnet build
-dotnet run --project src/Casarme.Api                # http://localhost:5264 (https profile: 7222)
-dotnet ef migrations add <Name> --project src/Casarme.Api --output-dir Data/Migrations
-dotnet ef database update --project src/Casarme.Api
-
-# Web (from apps/web)
-bun install
-bun run dev      # http://localhost:3000
-bun run build
-bun run db:generate   # drizzle-kit: generate SQL migration from src/db/schema.ts into drizzle/
-bun run db:migrate    # apply drizzle migrations
+task db:up | db:down | db:logs | db:psql | db:reset   # db:reset drops the volume (asks first)
+task api:migration NAME=<Name>                        # dotnet ef migrations add, output in Data/Migrations
+task api:db:update                                    # dotnet ef database update
+task web:db:generate                                  # drizzle-kit: SQL migration from src/db/schema.ts into drizzle/
+task web:db:migrate                                   # apply drizzle migrations
+task web:ui:add -- <component...>                     # add shadcn components
 ```
+
+Compose defaults to `podman-compose`; override with `COMPOSE="docker compose" task ...`. When adding a recurring dev command, add a task for it too. The underlying commands: `dotnet build|run|watch --project src/Casarme.Api` from `apps/backend` (https profile: 7222), `bun run dev|build|db:generate|db:migrate` from `apps/web`.
 
 Formatting: `bun fmt` in `apps/web` (config in `bunfig.toml` `[fmt]`), `dotnet format` in `apps/backend` (rules in `apps/backend/.editorconfig`). Git hooks run via lefthook (`lefthook.yml`, run `lefthook install` once): pre-commit formats staged files, pre-push runs format check + typecheck/build. Each command only runs for the app whose files changed.
 
