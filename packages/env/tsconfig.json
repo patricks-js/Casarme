@@ -1,0 +1,7 @@
+{
+  "extends": "@casarme/tsconfig/vite.json",
+  "compilerOptions": {
+    "types": ["bun"]
+  },
+  "include": ["src"]
+}
