@@ -1,0 +1,58 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Casarme.Api | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/status": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "operationId": "GetStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiStatus": {
+        "required": [
+          "service",
+          "environment",
+          "now"
+        ],
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "now": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Status"
+    }
+  ]
+}

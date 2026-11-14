@@ -1,0 +1,10 @@
+{
+  "name": "@casarme/api",
+  "private": true,
+  "scripts": {
+    "dev": "dotnet watch run --project src/Casarme.Api",
+    "openapi": "dotnet build src/Casarme.Api",
+    "build": "dotnet build src/Casarme.Api -c Release -p:OpenApiGenerateDocuments=false",
+    "migrate": "dotnet ef database update --project src/Casarme.Api"
+  }
+}
