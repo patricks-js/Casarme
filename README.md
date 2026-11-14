@@ -22,7 +22,7 @@ bun run dev                              # web, auth e api com recarregamento au
 | `auth` | http://localhost:3001 | http://localhost:3001/health |
 | `api` | http://localhost:5100 (OpenAPI em `/openapi/v1.json`) | http://localhost:5100/health |
 
-A página inicial do `web` mostra o status da `api`, buscado por uma *server function* com o `api-client`.
+A página inicial do `web` mostra o status da `api`. O TanStack Query busca o dado por uma *server function* que usa o `api-client`, e o cache já chega hidratado do servidor.
 
 Para o login com Google funcionar, preencha `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` em `apps/auth/.env`, com `http://localhost:3000/api/auth/callback/google` como URI de redirecionamento.
 
