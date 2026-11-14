@@ -62,7 +62,7 @@ packages/
 docs/           PRD, glossário, ADRs, modelo de domínio e esta página
 ```
 
-- **Bun** é o runtime e o gerenciador de pacotes do lado TypeScript, com a versão fixada no repositório (`packageManager`). O **Turborepo** orquestra as tarefas.
+- **Bun** é o runtime e o gerenciador de pacotes do lado TypeScript, com a versão fixada no repositório (`devEngines` do `package.json` da raiz). O **Turborepo** orquestra as tarefas.
 - As versões compartilhadas entre pacotes (TypeScript, zod, `@types/bun`, better-auth e `@tanstack/react-query`) ficam no *catalog* do `package.json` da raiz, e cada pacote as referencia com `catalog:`.
 - **Contrato entre `api` e `web`:**
   1. A `api` gera o OpenAPI a partir do próprio código.
