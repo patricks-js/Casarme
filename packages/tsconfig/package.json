@@ -1,0 +1,8 @@
+{
+  "name": "@casarme/tsconfig",
+  "private": true,
+  "files": [
+    "base.json",
+    "vite.json"
+  ]
+}
