@@ -17,6 +17,6 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
     },
   },
-  // Emite o JWT de Conta que a api valida pelo JWKS.
+  // Issues the Account JWT that the api validates through the JWKS.
   plugins: [jwt()],
 });
