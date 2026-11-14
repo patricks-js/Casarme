@@ -1,0 +1,99 @@
+# Desenvolvimento: `docker compose up -d` sobe só o Postgres; web, auth e api rodam com `bun run dev`.
+# Profile `full`: `docker compose --profile full up --build` sobe tudo em container, como em produção.
+name: casarme
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: casarme
+      POSTGRES_USER: casarme
+      POSTGRES_PASSWORD: casarme
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U casarme -d casarme"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  api-migrate:
+    profiles: [full]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: migrate
+    environment:
+      ConnectionStrings__Casarme: Host=postgres;Database=casarme;Username=casarme;Password=casarme
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    profiles: [full]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: api
+    environment:
+      ConnectionStrings__Casarme: Host=postgres;Database=casarme;Username=casarme;Password=casarme
+    depends_on:
+      api-migrate:
+        condition: service_completed_successfully
+
+  auth-migrate:
+    profiles: [full]
+    build:
+      context: .
+      dockerfile: apps/auth/Dockerfile
+    command: ["bun", "src/migrate.ts"]
+    environment: &auth-env
+      DATABASE_URL: postgres://casarme:casarme@postgres:5432/casarme
+      BETTER_AUTH_URL: http://localhost:8080
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-segredo-de-desenvolvimento-com-32-caracteres}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  auth:
+    profiles: [full]
+    build:
+      context: .
+      dockerfile: apps/auth/Dockerfile
+    environment: *auth-env
+    depends_on:
+      auth-migrate:
+        condition: service_completed_successfully
+
+  web:
+    profiles: [full]
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      API_URL: http://api:8080
+    depends_on:
+      - api
+      - auth
+
+  # Faz o papel do Traefik do Dokploy: /api/auth/* vai para o auth e o resto para o web.
+  proxy:
+    profiles: [full]
+    image: traefik:v3.6
+    command:
+      - --entrypoints.web.address=:80
+      - --providers.file.filename=/etc/traefik/dinamico.yml
+    volumes:
+      - ./infra/traefik/dinamico.yml:/etc/traefik/dinamico.yml:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - web
+      - auth
+
+volumes:
+  postgres:

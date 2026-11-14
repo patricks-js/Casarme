@@ -2,10 +2,46 @@
 
 Plataforma de organização de casamentos: os Noivos organizam Eventos, Convidados, Convites, RSVP e Recepção num só lugar.
 
+## Como subir o ambiente
+
+Pré-requisitos: [Bun](https://bun.sh) 1.4.4 (versão fixada em `package.json`), [.NET SDK](https://dotnet.microsoft.com) 10 e Docker (ou Podman) com Compose.
+
+```sh
+bun install
+dotnet tool restore                      # instala o dotnet-ef fixado em dotnet-tools.json
+cp apps/auth/.env.example apps/auth/.env
+cp apps/web/.env.example apps/web/.env
+docker compose up -d                     # só o Postgres
+bun run db:migrate                       # migrações da api (schema app) e do auth (schema auth)
+bun run dev                              # web, auth e api com recarregamento automático
+```
+
+| Serviço | Endereço | `/health` |
+|---|---|---|
+| `web` | http://localhost:3000, que repassa `/api/auth/*` para o `auth` | http://localhost:3000/health |
+| `auth` | http://localhost:3001 | http://localhost:3001/health |
+| `api` | http://localhost:5100 (OpenAPI em `/openapi/v1.json`) | http://localhost:5100/health |
+
+A página inicial do `web` mostra o status da `api`, buscado por uma *server function* com o `api-client`.
+
+Para o login com Google funcionar, preencha `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` em `apps/auth/.env`, com `http://localhost:3000/api/auth/callback/google` como URI de redirecionamento.
+
+### Contrato `api` → `web`
+
+O build da `api` gera `apps/api/openapi.json` a partir do código, e `packages/api-client` gera o cliente e os tipos a partir dele. O Turborepo encadeia isso antes de `build`, `typecheck` e `dev`. Ao mudar um endpoint com o `dev` rodando, rode `bun run generate` para atualizar o cliente. O `openapi.json` e o `src/generated/` gerados ficam versionados.
+
+### Tudo em container
+
+```sh
+docker compose --profile full up --build
+```
+
+Sobe Postgres, os containers de migração (`api-migrate` e `auth-migrate`, que rodam e terminam antes dos serviços), `api`, `auth`, `web` e um Traefik que faz o roteamento de produção: `/api/auth/*` para o `auth` e o resto para o `web`. Acesse em http://localhost:8080.
+
 ## Documentação
 
-- [PRD.md](./PRD.md): escopo do MVP, requisitos (FR/NFR) e regras de negócio (BR).
-- [GLOSSARY.md](./GLOSSARY.md): a linguagem do domínio. Use estes termos no código, nas telas e nos tickets.
+- [PRD.md](./docs/PRD.md): escopo do MVP, requisitos (FR/NFR) e regras de negócio (BR).
+- [GLOSSARY.md](./docs/GLOSSARY.md): a linguagem do domínio. Use estes termos no código, nas telas e nos tickets.
 - [docs/modelo-de-dominio.md](./docs/modelo-de-dominio.md): entidades, valores calculados e regras de apagar vs. cancelar.
 - [docs/arquitetura.md](./docs/arquitetura.md): peças do sistema, monorepo, ambientes, testes e deploy, além das decisões em aberto.
 - [docs/adr/](./docs/adr/): decisões de arquitetura difíceis de reverter.

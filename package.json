@@ -1,0 +1,33 @@
+{
+  "name": "casarme",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "generate": "turbo run generate",
+    "db:migrate": "turbo migrate"
+  },
+  "devDependencies": {
+    "turbo": "2.11.10"
+  },
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "typescript": "7.0.2"
+    }
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "bun",
+      "version": "1.4.4"
+    },
+    "packageManager": {
+      "name": "bun",
+      "version": "1.4.4"
+    }
+  }
+}
