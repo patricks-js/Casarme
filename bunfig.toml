@@ -1,0 +1,13 @@
+[run]
+bun = true
+
+[install]
+exact = true
+minimumReleaseAge = 604800
+minimumReleaseAgeExcludes = ["@types/bun", "typescript"]
+
+[fmt]
+sortImports = true
+sortTailwindcss = true
+sortPackageJson = true
+ignorePatterns = ["vendor/", "drizzle/", "**/*.gen.ts"]
