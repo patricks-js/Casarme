@@ -1,0 +1,28 @@
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react";
+import { nitro } from "nitro/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  server: { port: 3000 },
+  resolve: {
+    tsconfigPaths: true,
+  },
+  plugins: [
+    tanstackStart({
+      router: {
+        routeToken: "layout",
+        quoteStyle: "double",
+        semicolons: true,
+      },
+    }),
+    nitro({
+      preset: "bun",
+      // In production Traefik sends /api/auth/* to the auth service; in dev the web server does the same.
+      devProxy: {
+        "/api/auth/**": process.env["AUTH_URL"] ?? "http://localhost:3001",
+      },
+    }),
+    react(),
+  ],
+});

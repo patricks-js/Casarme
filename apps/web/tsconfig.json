@@ -1,0 +1,25 @@
+{
+  "extends": "@casarme/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "jsx": "react-jsx",
+    "types": [
+      "bun",
+      "vite/client"
+    ],
+    "verbatimModuleSyntax": false,
+    "paths": {
+      "#/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "vite.config.ts"
+  ]
+}

@@ -52,6 +52,7 @@ The code is written in **English**: identifiers (variables, functions, types, cl
 # Web app
 
 - Server-only endpoints of `apps/web` (API routes such as the health check) live in `src/routes/api/` and their URLs carry the `/api` prefix, e.g. `/api/health`. `/api/auth/*` is the exception: the proxy sends it to the auth service, so the web app must not define routes there.
+- Inside `apps/web`, import from `src/` with the `#/` alias (`#/lib/api-client`), defined in the app's `tsconfig.json` `paths` and resolved by Vite's `resolve.tsconfigPaths`. Use `./` only for files in the same folder. Don't add path aliases to the other apps or packages: `paths` don't travel across workspace packages, and Node-style `#` subpath imports are avoided on purpose.
 
 # Mics
 
