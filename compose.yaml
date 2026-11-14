@@ -1,5 +1,5 @@
-# Desenvolvimento: `docker compose up -d` sobe só o Postgres; web, auth e api rodam com `bun run dev`.
-# Profile `full`: `docker compose --profile full up --build` sobe tudo em container, como em produção.
+# Development: `docker compose up -d` starts only Postgres; web, auth and api run with `bun run dev`.
+# Profile `full`: `docker compose --profile full up --build` starts everything in containers, as in production.
 name: casarme
 
 services:
@@ -81,15 +81,15 @@ services:
       - api
       - auth
 
-  # Faz o papel do Traefik do Dokploy: /api/auth/* vai para o auth e o resto para o web.
+  # Plays the role of the Dokploy Traefik: /api/auth/* goes to auth and the rest to web.
   proxy:
     profiles: [full]
     image: traefik:v3.6
     command:
       - --entrypoints.web.address=:80
-      - --providers.file.filename=/etc/traefik/dinamico.yml
+      - --providers.file.filename=/etc/traefik/dynamic.yml
     volumes:
-      - ./infra/traefik/dinamico.yml:/etc/traefik/dinamico.yml:ro
+      - ./infra/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
     ports:
       - "8080:80"
     depends_on:

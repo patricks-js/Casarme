@@ -42,6 +42,13 @@ describe("", () => {
 
 For more information, read the Bun API docs in node_modules/bun-types/docs/\*\*.md.
 
+# Language of the code
+
+The code is written in **English**: identifiers (variables, functions, types, classes, columns, routes), file names, folder names and code comments, in every app and package (TypeScript and .NET).
+
+- **Only domain names may be in Portuguese**, for now: the glossary's terms (`Convite`, `Noivos`, `Recepção`...) used as names of domain concepts. The team may still move the domain names to English, so keep them isolated in domain code and don't spread Portuguese into anything else.
+- **Everything that isn't explicitly domain is English.** `createApiClient`, not `criarApiClient`; `server/`, not `servidor/`; `Data/` and `Migrations/`, not `Dados/` and `Migracoes/`; `getStatus`, not `obterStatus`. User-facing text (UI strings) is not code and stays in Portuguese.
+
 # Mics
 
 - When grilling, ask one question at a time.

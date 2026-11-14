@@ -1,6 +1,6 @@
 import { index, snakeCase } from "drizzle-orm/pg-core";
 
-// O auth é dono do schema `auth`.
+// The auth service owns the `auth` schema.
 export const authSchema = snakeCase.schema("auth");
 
 export const users = authSchema.table("users", (t) => ({
