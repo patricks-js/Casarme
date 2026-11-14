@@ -16,9 +16,9 @@ bun run db:migrate                       # migrações da api (schema app) e do 
 bun run dev                              # web, auth e api com recarregamento automático
 ```
 
-| Serviço | Endereço | `/health` |
+| Serviço | Endereço | Health |
 |---|---|---|
-| `web` | http://localhost:3000, que repassa `/api/auth/*` para o `auth` | http://localhost:3000/health |
+| `web` | http://localhost:3000, que repassa `/api/auth/*` para o `auth` | http://localhost:3000/api/health |
 | `auth` | http://localhost:3001 | http://localhost:3001/health |
 | `api` | http://localhost:5100 (OpenAPI em `/openapi/v1.json`) | http://localhost:5100/health |
 
