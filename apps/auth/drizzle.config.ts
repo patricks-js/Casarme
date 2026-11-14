@@ -8,4 +8,6 @@ export default defineConfig({
   dbCredentials: {
     url: env.DATABASE_URL,
   },
+  // Keeps the migrations history in the `auth` schema instead of a separate `drizzle` schema.
+  migrations: { schema: "auth" },
 });
