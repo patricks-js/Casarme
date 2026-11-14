@@ -56,14 +56,17 @@ apps/
   api/          ASP.NET Core (solution .NET, com package.json fino para o Turborepo)
   auth/         better-auth
 packages/
-  api-client/   tipos e cliente gerados do OpenAPI da api
+  api-client/   tipos, schemas e cliente gerados do OpenAPI da api
+  env/          variáveis de ambiente validadas na subida (client e server, por app)
+  tsconfig/     configuração compartilhada do TypeScript
 docs/           PRD, glossário, ADRs, modelo de domínio e esta página
 ```
 
 - **Bun** é o runtime e o gerenciador de pacotes do lado TypeScript, com a versão fixada no repositório (`packageManager`). O **Turborepo** orquestra as tarefas.
+- As versões compartilhadas entre pacotes (TypeScript, zod, `@types/bun`, better-auth e `@tanstack/react-query`) ficam no *catalog* do `package.json` da raiz, e cada pacote as referencia com `catalog:`.
 - **Contrato entre `api` e `web`:**
   1. A `api` gera o OpenAPI a partir do próprio código.
-  2. O `packages/api-client` gera tipos e um cliente `fetch` tipado com `@hey-api/openapi-ts`.
+  2. O `packages/api-client` gera, com `@hey-api/openapi-ts`, os tipos, um cliente `ky` tipado, schemas do zod que validam requisição e resposta, e as chaves do TanStack Query.
   3. O Turborepo conhece a cadeia `api` → `openapi.json` → `api-client` → `web`.
   4. O CI falha se o cliente gerado estiver desatualizado.
 
