@@ -11,15 +11,15 @@
     "generate": "openapi-ts",
     "typecheck": "tsc"
   },
+  "dependencies": {
+    "@tanstack/react-query": "catalog:",
+    "ky": "2.2.0",
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "@casarme/api": "workspace:*",
     "@casarme/tsconfig": "workspace:*",
     "@hey-api/openapi-ts": "0.0.0-next-20260930190945",
     "typescript": "catalog:"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "catalog:",
-    "ky": "2.2.0",
-    "zod": "catalog:"
   }
 }

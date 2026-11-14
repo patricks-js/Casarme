@@ -1,16 +1,6 @@
 {
   "name": "casarme",
   "private": true,
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "typecheck": "turbo typecheck",
-    "generate": "turbo run generate",
-    "db:migrate": "turbo migrate"
-  },
-  "devDependencies": {
-    "turbo": "2.11.10"
-  },
   "workspaces": {
     "packages": [
       "apps/*",
@@ -24,12 +14,26 @@
       "zod": "4.6.7"
     }
   },
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "generate": "turbo run generate",
+    "db:migrate": "turbo migrate",
+    "format": "bun fmt && dotnet format apps/api/Casarme.slnx",
+    "format:check": "bun fmt --check && dotnet format apps/api/Casarme.slnx --verify-no-changes",
+    "prepare": "lefthook install || true"
+  },
+  "devDependencies": {
+    "lefthook": "2.2.2",
+    "turbo": "2.11.10"
+  },
   "devEngines": {
-    "runtime": {
+    "packageManager": {
       "name": "bun",
       "version": "1.4.4"
     },
-    "packageManager": {
+    "runtime": {
       "name": "bun",
       "version": "1.4.4"
     }

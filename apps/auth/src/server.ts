@@ -1,7 +1,8 @@
 import { env } from "@casarme/env/server/auth";
 import { sql } from "drizzle-orm";
-import { auth } from "./lib/auth";
+
 import { db } from "./db";
+import { auth } from "./lib/auth";
 
 const server = Bun.serve({
   port: env.PORT,

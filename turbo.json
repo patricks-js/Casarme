@@ -3,51 +3,23 @@
   "ui": "tui",
   "tasks": {
     "openapi": {
-      "inputs": [
-        "**/*.cs",
-        "**/*.csproj",
-        "!bin/**",
-        "!obj/**"
-      ],
-      "outputs": [
-        "openapi.json"
-      ]
+      "inputs": ["**/*.cs", "**/*.csproj", "!bin/**", "!obj/**"],
+      "outputs": ["openapi.json"]
     },
     "generate": {
-      "dependsOn": [
-        "^openapi"
-      ],
-      "inputs": [
-        "openapi-ts.config.ts",
-        "../../apps/api/openapi.json"
-      ],
-      "outputs": [
-        "src/generated/**"
-      ]
+      "dependsOn": ["^openapi"],
+      "inputs": ["openapi-ts.config.ts", "../../apps/api/openapi.json"],
+      "outputs": ["src/generated/**"]
     },
     "build": {
-      "dependsOn": [
-        "^generate",
-        "generate",
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        ".output/**",
-        "bin/**",
-        "obj/**"
-      ]
+      "dependsOn": ["^generate", "generate", "^build"],
+      "outputs": ["dist/**", ".output/**", "bin/**", "obj/**"]
     },
     "typecheck": {
-      "dependsOn": [
-        "^generate",
-        "generate"
-      ]
+      "dependsOn": ["^generate", "generate"]
     },
     "dev": {
-      "dependsOn": [
-        "^generate"
-      ],
+      "dependsOn": ["^generate"],
       "cache": false,
       "persistent": true
     },

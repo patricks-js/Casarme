@@ -54,6 +54,13 @@ The code is written in **English**: identifiers (variables, functions, types, cl
 - Server-only endpoints of `apps/web` (API routes such as the health check) live in `src/routes/api/` and their URLs carry the `/api` prefix, e.g. `/api/health`. `/api/auth/*` is the exception: the proxy sends it to the auth service, so the web app must not define routes there.
 - Inside `apps/web`, import from `src/` with the `#/` alias (`#/lib/api-client`), defined in the app's `tsconfig.json` `paths` and resolved by Vite's `resolve.tsconfigPaths`. Use `./` only for files in the same folder. Don't add path aliases to the other apps or packages: `paths` don't travel across workspace packages, and Node-style `#` subpath imports are avoided on purpose.
 
+# Formatting and git hooks
+
+- TypeScript, JSON and CSS are formatted with `bun fmt` (configured in the `[fmt]` section of `bunfig.toml`); C# with `dotnet format`. `bun run format` runs both and `bun run format:check` only checks.
+- Don't add a package script named `fmt`: `bun fmt` runs it instead of the formatter.
+- Generated files, vendored skills and Markdown are excluded from `bun fmt` (`ignorePatterns` in `bunfig.toml`). Don't format them by hand.
+- Git hooks are managed by lefthook (`lefthook.yml`) and installed by `bun install` (the `prepare` script). `pre-commit` formats the staged files and re-stages them; `pre-push` checks formatting, runs `bun run typecheck` and builds the api. Never skip them with `--no-verify`.
+
 # Mics
 
 - When grilling, ask one question at a time.
