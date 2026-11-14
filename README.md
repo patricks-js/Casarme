@@ -30,6 +30,10 @@ Para o login com Google funcionar, preencha `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_
 
 O build da `api` gera `apps/api/openapi.json` a partir do código, e `packages/api-client` gera o cliente e os tipos a partir dele. O Turborepo encadeia isso antes de `build`, `typecheck` e `dev`. Ao mudar um endpoint com o `dev` rodando, rode `bun run generate` para atualizar o cliente. O `openapi.json` e o `src/generated/` gerados ficam versionados.
 
+### Formatação e hooks
+
+O TypeScript é formatado com `bun fmt` e o C# com `dotnet format`: `bun run format` formata tudo e `bun run format:check` só confere. O [lefthook](https://lefthook.dev) é instalado pelo `bun install` e liga dois hooks: o `pre-commit` formata os arquivos que você vai commitar, e o `pre-push` confere a formatação, roda o `bun run typecheck` e compila a `api`.
+
 ### Tudo em container
 
 ```sh

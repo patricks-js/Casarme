@@ -2,23 +2,23 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "lib": ["ESNext"],
-       "target": "ESNext",
-       "module": "preserve",
-       "moduleDetection": "force",
+    "target": "ESNext",
+    "module": "preserve",
+    "moduleDetection": "force",
 
-       "moduleResolution": "bundler",
-       "allowImportingTsExtensions": true,
-       "verbatimModuleSyntax": true,
-       "noEmit": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
 
-       "strict": true,
-       "skipLibCheck": true,
-       "noFallthroughCasesInSwitch": true,
-       "noUncheckedIndexedAccess": true,
-       "noImplicitOverride": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
 
-       "noUnusedLocals": true,
-       "noUnusedParameters": true,
-       "noPropertyAccessFromIndexSignature": true
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true
   }
 }

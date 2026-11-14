@@ -1,0 +1,29 @@
+# Each command only runs when the commit/push touches files matching its glob (and root).
+# Formatting: `bun fmt` for TypeScript/JSON/CSS, `dotnet format` for C#.
+pre-commit:
+  parallel: true
+  commands:
+    ts-fmt:
+      glob: "*.{ts,tsx,js,css,json}"
+      # formats and re-stages only the staged files
+      run: bun fmt --staged
+    api-fmt:
+      root: "apps/api/"
+      glob: "*.cs"
+      # whitespace only: no MSBuild load, ~1s
+      run: dotnet format whitespace --folder --include {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  # glob/root only filter pre-push commands against an explicit file list;
+  # new branches have no @{push} yet, so fall back to diffing against main
+  files: "git diff --name-only @{push} HEAD 2>/dev/null || git diff --name-only origin/main HEAD"
+  commands:
+    ts-check:
+      glob: "*.{ts,tsx,js,css,json}"
+      run: bun fmt --check && bun run typecheck
+    api-check:
+      root: "apps/api/"
+      glob: "*.{cs,csproj,slnx,json}"
+      run: dotnet format --verify-no-changes && dotnet build --nologo
