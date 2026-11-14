@@ -1,0 +1,17 @@
+http:
+  routers:
+    auth:
+      rule: PathPrefix(`/api/auth`)
+      service: auth
+    web:
+      rule: PathPrefix(`/`)
+      service: web
+  services:
+    auth:
+      loadBalancer:
+        servers:
+          - url: http://auth:3001
+    web:
+      loadBalancer:
+        servers:
+          - url: http://web:3000
