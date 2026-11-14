@@ -1,0 +1,22 @@
+{
+  "name": "@casarme/env",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": "./src/client.ts",
+    "./server/auth": "./src/server/auth.ts",
+    "./server/web": "./src/server/web.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "0.13.11",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@casarme/tsconfig": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  }
+}
