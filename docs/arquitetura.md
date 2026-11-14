@@ -63,7 +63,7 @@ docs/           PRD, glossário, ADRs, modelo de domínio e esta página
 - **Bun** é o runtime e o gerenciador de pacotes do lado TypeScript, com a versão fixada no repositório (`packageManager`). O **Turborepo** orquestra as tarefas.
 - **Contrato entre `api` e `web`:**
   1. A `api` gera o OpenAPI a partir do próprio código.
-  2. O `packages/api-client` gera tipos e um `fetch` tipado com `openapi-typescript` + `openapi-fetch`.
+  2. O `packages/api-client` gera tipos e um cliente `fetch` tipado com `@hey-api/openapi-ts`.
   3. O Turborepo conhece a cadeia `api` → `openapi.json` → `api-client` → `web`.
   4. O CI falha se o cliente gerado estiver desatualizado.
 

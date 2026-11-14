@@ -1,6 +1,6 @@
 # Modelo de Domínio
 
-Modelo conceitual dos dados do Casarme. Os termos seguem o [GLOSSARY.md](../GLOSSARY.md), e o escopo e as regras de negócio estão no [PRD.md](../PRD.md). Este documento não fixa tecnologia, tipos de coluna ou nomes no código.
+Modelo conceitual dos dados do Casarme. Os termos seguem o [GLOSSARY.md](./GLOSSARY.md), e o escopo e as regras de negócio estão no [PRD.md](./PRD.md). Este documento não fixa tecnologia, tipos de coluna ou nomes no código.
 
 ## Entidades
 
