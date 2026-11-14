@@ -128,6 +128,6 @@ Ainda não decidido. Opções levantadas:
 - **O mínimo**: era a recomendação. Pode ser ligado depois sem reescrever nada.
   - Logs estruturados em JSON na saída padrão (Serilog na `api`, logger JSON no `web` e no `auth`), visíveis no Dokploy.
   - Sentry gratuito nos três serviços, para receber cada erro com *stack trace* e alerta por e-mail.
-  - Um verificador de disponibilidade **externo à casa** (por exemplo UptimeRobot) chamando `/health` dos serviços públicos.
+  - Um verificador de disponibilidade **externo à casa** (por exemplo UptimeRobot) chamando o health dos serviços públicos (`/api/health` no `web`, `/health` nos demais).
 - **Observabilidade completa** (OpenTelemetry + Grafana, Loki e Tempo, auto-hospedados): métricas, *traces* e logs centralizados, mas pesada de operar sozinho num MVP.
 - **Só os logs do Dokploy**: o mínimo possível, sem alerta nenhum.

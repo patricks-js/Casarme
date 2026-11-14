@@ -49,6 +49,10 @@ The code is written in **English**: identifiers (variables, functions, types, cl
 - **Only domain names may be in Portuguese**, for now: the glossary's terms (`Convite`, `Noivos`, `Recepção`...) used as names of domain concepts. The team may still move the domain names to English, so keep them isolated in domain code and don't spread Portuguese into anything else.
 - **Everything that isn't explicitly domain is English.** `createApiClient`, not `criarApiClient`; `server/`, not `servidor/`; `Data/` and `Migrations/`, not `Dados/` and `Migracoes/`; `getStatus`, not `obterStatus`. User-facing text (UI strings) is not code and stays in Portuguese.
 
+# Web app
+
+- Server-only endpoints of `apps/web` (API routes such as the health check) live in `src/routes/api/` and their URLs carry the `/api` prefix, e.g. `/api/health`. `/api/auth/*` is the exception: the proxy sends it to the auth service, so the web app must not define routes there.
+
 # Mics
 
 - When grilling, ask one question at a time.
