@@ -86,7 +86,7 @@ docs/           PRD, glossário, ADRs, modelo de domínio e esta página
 
 ## Banco e migrações
 
-- Cada serviço tem um container de migração que roda e termina antes do serviço subir (`api-migrate` com um *migration bundle* do EF Core e `auth-migrate` com as migrações do better-auth). Os serviços nunca migram o banco ao iniciar.
+- Cada serviço tem um container de migração que roda e termina antes do serviço subir (`api-migrate` com um *migration bundle* do EF Core e `auth-migrate` com as migrações do Drizzle, geradas a partir do schema do better-auth). Os serviços nunca migram o banco ao iniciar.
 
 ## Ambientes
 
