@@ -22,6 +22,9 @@ public class CasarmeDbContext(DbContextOptions<CasarmeDbContext> options) : DbCo
         modelBuilder.Entity<Noivo>().HasOne(x => x.Casamento).WithMany(x => x.Noivos).HasForeignKey(x => x.CasamentoId);
         modelBuilder.Entity<Evento>().HasOne(x => x.Casamento).WithMany(x => x.Events).HasForeignKey(x => x.CasamentoId);
         modelBuilder.Entity<Evento>().HasIndex(x => x.CasamentoId).IsUnique().HasFilter("\"IsPrincipal\" = true");
+        modelBuilder.Entity<Evento>().Property(x => x.Name).HasMaxLength(200);
+        modelBuilder.Entity<Evento>().Property(x => x.Location).HasMaxLength(500);
+        modelBuilder.Entity<Evento>().Property(x => x.RsvpDeadline).HasColumnType("timestamp without time zone");
         modelBuilder.Entity<Evento>().Property(x => x.StartsAt).HasColumnType("timestamp without time zone");
     }
 }

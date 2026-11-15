@@ -1,29 +1,13 @@
 import {
   type CasamentoResponse,
-  createApiClient,
   createCasamento,
   getCurrentCasamento,
   type SaveCasamento,
   updateCasamento,
 } from "@casarme/api-client";
-import { env } from "@casarme/env/server/web";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
 
-async function accountClient() {
-  const cookie = getRequestHeaders().get("cookie") ?? "";
-  const response = await fetch(`${env.AUTH_URL}/api/auth/token`, {
-    headers: { cookie },
-  });
-  if (response.status === 401) return null;
-  if (!response.ok) throw new Error("Não foi possível verificar sua Conta.");
-  const { token } = (await response.json()) as { token?: string };
-  return token
-    ? createApiClient(env.API_URL, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-    : null;
-}
+import { accountClient } from "#/lib/account.server";
 
 export const loadCasamento = createServerFn({ method: "GET" }).handler(
   async () => {

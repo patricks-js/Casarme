@@ -125,6 +125,200 @@
         }
       }
     },
+    "/casamentos/{casamentoId}/eventos": {
+      "get": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "ListEventos",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "CreateEvento",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveEvento"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/casamentos/{casamentoId}/eventos/{id}": {
+      "put": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "UpdateEvento",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveEvento"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "DeleteEvento",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/casamentos/{casamentoId}/eventos/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "CancelEvento",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/status": {
       "get": {
         "tags": [
@@ -202,6 +396,60 @@
           }
         }
       },
+      "EventoResponse": {
+        "required": [
+          "id",
+          "name",
+          "startsAt",
+          "location",
+          "hasReception",
+          "rsvpDeadline",
+          "effectiveRsvpDeadline",
+          "isPrincipal",
+          "status",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string"
+          },
+          "hasReception": {
+            "type": "boolean"
+          },
+          "rsvpDeadline": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "effectiveRsvpDeadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isPrincipal": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        }
+      },
       "SaveCasamento": {
         "required": [
           "coupleName",
@@ -226,6 +474,38 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "SaveEvento": {
+        "required": [
+          "name",
+          "startsAt",
+          "location",
+          "hasReception",
+          "rsvpDeadline"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string"
+          },
+          "hasReception": {
+            "type": "boolean"
+          },
+          "rsvpDeadline": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       }

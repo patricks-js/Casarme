@@ -32,6 +32,18 @@ public class Evento
     public string Name { get; set; } = "Cerimônia";
     public DateTime StartsAt { get; set; }
     public bool IsPrincipal { get; set; } = true;
+    public string Location { get; set; } = "";
+    public bool HasReception { get; set; }
+    public DateTime? RsvpDeadline { get; set; }
+    public DateTimeOffset? CancelledAt { get; set; }
+    public DateTime EffectiveRsvpDeadline => RsvpDeadline ?? StartsAt;
+    public bool Cancel(DateTimeOffset now)
+    {
+        if (IsPrincipal) return false;
+        CancelledAt ??= now;
+        UpdatedAt = now;
+        return true;
+    }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
 }

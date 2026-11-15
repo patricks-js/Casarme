@@ -5,8 +5,8 @@ export default defineConfig({
   output: "src/generated",
   plugins: [
     "@hey-api/typescript",
-    // The .NET api serializes DateTimeOffset with an offset (e.g. +00:00).
-    { name: "zod", dates: { offset: true } },
+    // Event times are local to the Casamento; operational timestamps carry offsets.
+    { name: "zod", dates: { offset: true, local: true } },
     { name: "@hey-api/sdk", validator: true },
     "@hey-api/client-ky",
     "@tanstack/react-query",

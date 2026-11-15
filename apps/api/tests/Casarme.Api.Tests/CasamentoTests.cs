@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Casarme.Api.Casamentos;
 using Casarme.Api.Data;
+using Casarme.Api.Eventos;
 using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -57,6 +58,7 @@ public class CasamentoTests : IAsyncLifetime
         var error = await process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync();
         Assert.True(process.ExitCode == 0, error);
+        Assert.False(string.IsNullOrWhiteSpace(output), "dotnet user-jwts must return a signed token.");
         return output.Trim();
     }
     private HttpClient Client(string? token)
@@ -125,11 +127,53 @@ public class CasamentoTests : IAsyncLifetime
         var db = scope.ServiceProvider.GetRequiredService<CasarmeDbContext>();
         Assert.Single(await db.Casamentos.ToListAsync()); Assert.Single(await db.Noivos.ToListAsync()); Assert.Single(await db.Events.ToListAsync());
     }
+    [Fact]
+    public async Task Eventos_lifecycle_validation_and_account_isolation()
+    {
+        using var alice = Client(_firstToken); using var bob = Client(_secondToken); using var anonymous = Client(null);
+        var wedding = (await (await alice.PostAsJsonAsync("/casamentos/", new SaveCasamento("Casal", new DateOnly(2027, 6, 12), "events", "America/Recife"))).Content.ReadFromJsonAsync<CasamentoResponse>())!;
+        var path = $"/casamentos/{wedding.Id}/eventos";
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync(path)).StatusCode);
+        var request = new SaveEvento("Chá", new DateTime(2027, 2, 10, 15, 30, 0), "Jardim", true, null);
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.PostAsJsonAsync(path, request)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.GetAsync(path)).StatusCode);
+        foreach (var invalid in new[] { request with { Name = " " }, request with { Location = "" }, request with { StartsAt = default }, request with { StartsAt = DateTime.UtcNow }, request with { RsvpDeadline = DateTime.UtcNow } })
+            Assert.Equal(HttpStatusCode.BadRequest, (await alice.PostAsJsonAsync(path, invalid)).StatusCode);
+        var created = await alice.PostAsJsonAsync(path, request);
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        var value = (await created.Content.ReadFromJsonAsync<EventoResponse>())!;
+        Assert.False(value.IsPrincipal); Assert.Equal("active", value.Status); Assert.Equal(request.StartsAt, value.EffectiveRsvpDeadline); Assert.Equal("America/Recife", value.TimeZone);
+        var item = $"{path}/{value.Id}";
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.PutAsJsonAsync(item, request)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.PostAsync(item + "/cancel", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.DeleteAsync(item)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await alice.PutAsJsonAsync($"/casamentos/{Guid.NewGuid()}/eventos/{value.Id}", request)).StatusCode);
+        var edit = request with { Name = "Chá de panela", StartsAt = new DateTime(2027, 3, 12, 16, 0, 0), HasReception = false, RsvpDeadline = new DateTime(2027, 3, 1, 12, 0, 0), Location = "Salão" };
+        var edited = (await (await alice.PutAsJsonAsync(item, edit)).Content.ReadFromJsonAsync<EventoResponse>())!;
+        Assert.Equal(edit.Name, edited.Name); Assert.Equal(edit.StartsAt, edited.StartsAt); Assert.Equal(edit.Location, edited.Location); Assert.False(edited.HasReception); Assert.Equal(edit.RsvpDeadline, edited.EffectiveRsvpDeadline);
+        var principalPath = $"{path}/{wedding.PrincipalEventId}";
+        Assert.Equal(HttpStatusCode.Conflict, (await alice.PostAsync(principalPath + "/cancel", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, (await alice.DeleteAsync(principalPath)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await alice.PutAsJsonAsync(principalPath, request with { StartsAt = new DateTime(2027, 6, 12, 18, 30, 0) })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await alice.PutAsJsonAsync($"/casamentos/{wedding.Id}", new SaveCasamento("Casal", new DateOnly(2027, 6, 13), "events", "America/Recife"))).StatusCode);
+        var cancelled = (await (await alice.PostAsync(item + "/cancel", null)).Content.ReadFromJsonAsync<EventoResponse>())!;
+        Assert.Equal("cancelled", cancelled.Status);
+        var stillCancelled = (await (await alice.PutAsJsonAsync(item, request)).Content.ReadFromJsonAsync<EventoResponse>())!;
+        Assert.Equal("cancelled", stillCancelled.Status); Assert.True(stillCancelled.HasReception);
+        var list = (await alice.GetFromJsonAsync<EventoResponse[]>(path))!;
+        Assert.Equal(2, list.Length); Assert.Equal(value.Id, list[0].Id); Assert.Equal("cancelled", list[0].Status); Assert.True(list[1].IsPrincipal);
+        Assert.Equal(new DateTime(2027, 6, 13, 18, 30, 0), list[1].StartsAt);
+        Assert.Equal(HttpStatusCode.NoContent, (await alice.DeleteAsync(item)).StatusCode);
+        Assert.Single((await alice.GetFromJsonAsync<EventoResponse[]>(path))!);
+    }
     public async Task DisposeAsync()
     {
         if (_factory is not null) await _factory.DisposeAsync(); await _postgres.DisposeAsync(); Directory.Delete(_directory, true);
         // Remove only this fixture's development signing key.
-        var secretPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".microsoft", "usersecrets", _secretId);
+        var appData = Environment.GetEnvironmentVariable("APPDATA");
+        var secretPath = string.IsNullOrEmpty(appData)
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".microsoft", "usersecrets", _secretId)
+            : Path.Combine(appData, "Microsoft", "UserSecrets", _secretId);
         if (Directory.Exists(secretPath)) Directory.Delete(secretPath, true);
     }
 }
