@@ -2,6 +2,7 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 
 import { Eventos } from "#/components/eventos";
+import { GuestManager } from "#/components/guest-manager";
 import { loadCasamento, saveCasamento } from "#/lib/casamento-server";
 
 export const Route = createFileRoute("/")({
@@ -137,6 +138,7 @@ function Home() {
           onSaved={() => router.invalidate()}
         />
       )}
+      {casamento && <GuestManager casamentoId={casamento.id!} />}
     </main>
   );
 }

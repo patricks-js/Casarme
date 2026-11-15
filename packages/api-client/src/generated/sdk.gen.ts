@@ -4,8 +4,8 @@ import * as z from 'zod';
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CancelEventoData, CancelEventoResponses, CreateCasamentoData, CreateCasamentoResponses, CreateEventoData, CreateEventoResponses, DeleteEventoData, DeleteEventoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, ListEventosData, ListEventosResponses, UpdateCasamentoData, UpdateCasamentoResponses, UpdateEventoData, UpdateEventoResponses } from './types.gen';
-import { zCancelEventoPath, zCancelEventoResponse, zCreateCasamentoBody, zCreateCasamentoResponse, zCreateEventoBody, zCreateEventoPath, zCreateEventoResponse, zDeleteEventoPath, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zListEventosPath, zListEventosResponse, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse, zUpdateEventoBody, zUpdateEventoPath, zUpdateEventoResponse } from './zod.gen';
+import type { CancelEventoData, CancelEventoResponses, CreateCasamentoData, CreateCasamentoResponses, CreateConvidadoData, CreateConvidadoResponses, CreateEventoData, CreateEventoResponses, CreateGrupoData, CreateGrupoResponses, DeleteConvidadoData, DeleteConvidadoResponses, DeleteEventoData, DeleteEventoResponses, DeleteGrupoData, DeleteGrupoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, ListEventosData, ListEventosResponses, ListGruposData, ListGruposResponses, SetGrupoRepresentativeData, SetGrupoRepresentativeResponses, UpdateCasamentoData, UpdateCasamentoResponses, UpdateConvidadoData, UpdateConvidadoResponses, UpdateEventoData, UpdateEventoResponses, UpdateGrupoData, UpdateGrupoResponses } from './types.gen';
+import { zCancelEventoPath, zCancelEventoResponse, zCreateCasamentoBody, zCreateCasamentoResponse, zCreateConvidadoBody, zCreateConvidadoPath, zCreateConvidadoResponse, zCreateEventoBody, zCreateEventoPath, zCreateEventoResponse, zCreateGrupoBody, zCreateGrupoPath, zCreateGrupoResponse, zDeleteConvidadoPath, zDeleteEventoPath, zDeleteGrupoPath, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zListEventosPath, zListEventosResponse, zListGruposPath, zListGruposResponse, zSetGrupoRepresentativeBody, zSetGrupoRepresentativePath, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse, zUpdateConvidadoBody, zUpdateConvidadoPath, zUpdateEventoBody, zUpdateEventoPath, zUpdateEventoResponse, zUpdateGrupoBody, zUpdateGrupoPath } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
   /**
@@ -133,6 +133,109 @@ export const cancelEvento = <ThrowOnError extends boolean = false>(options: Opti
   responseValidator: async (data) => await zCancelEventoResponse.parseAsync(data),
   url: '/casamentos/{casamentoId}/eventos/{id}/cancel',
   ...options
+});
+
+export const listGrupos = <ThrowOnError extends boolean = false>(options: Options<ListGruposData, ThrowOnError>): RequestResult<ListGruposResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListGruposResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zListGruposPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zListGruposResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos',
+  ...options
+});
+
+export const createGrupo = <ThrowOnError extends boolean = false>(options: Options<CreateGrupoData, ThrowOnError>): RequestResult<CreateGrupoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateGrupoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zCreateGrupoBody,
+    path: zCreateGrupoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCreateGrupoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const deleteGrupo = <ThrowOnError extends boolean = false>(options: Options<DeleteGrupoData, ThrowOnError>): RequestResult<DeleteGrupoResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteGrupoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zDeleteGrupoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos/{id}',
+  ...options
+});
+
+export const updateGrupo = <ThrowOnError extends boolean = false>(options: Options<UpdateGrupoData, ThrowOnError>): RequestResult<UpdateGrupoResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateGrupoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zUpdateGrupoBody,
+    path: zUpdateGrupoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos/{id}',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const setGrupoRepresentative = <ThrowOnError extends boolean = false>(options: Options<SetGrupoRepresentativeData, ThrowOnError>): RequestResult<SetGrupoRepresentativeResponses, unknown, ThrowOnError> => (options.client ?? client).put<SetGrupoRepresentativeResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zSetGrupoRepresentativeBody,
+    path: zSetGrupoRepresentativePath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos/{id}/representante',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const createConvidado = <ThrowOnError extends boolean = false>(options: Options<CreateConvidadoData, ThrowOnError>): RequestResult<CreateConvidadoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateConvidadoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zCreateConvidadoBody,
+    path: zCreateConvidadoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCreateConvidadoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/convidados',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const deleteConvidado = <ThrowOnError extends boolean = false>(options: Options<DeleteConvidadoData, ThrowOnError>): RequestResult<DeleteConvidadoResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteConvidadoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zDeleteConvidadoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/convidados/{id}',
+  ...options
+});
+
+export const updateConvidado = <ThrowOnError extends boolean = false>(options: Options<UpdateConvidadoData, ThrowOnError>): RequestResult<UpdateConvidadoResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateConvidadoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zUpdateConvidadoBody,
+    path: zUpdateConvidadoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/convidados/{id}',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
 });
 
 export const getStatus = <ThrowOnError extends boolean = false>(options?: Options<GetStatusData, ThrowOnError>): RequestResult<GetStatusResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetStatusResponses, unknown, ThrowOnError>({

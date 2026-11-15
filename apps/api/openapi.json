@@ -319,6 +319,311 @@
         }
       }
     },
+    "/casamentos/{casamentoId}/grupos": {
+      "get": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "ListGrupos",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GrupoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "CreateGrupo",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveGrupo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/casamentos/{casamentoId}/grupos/{id}": {
+      "put": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "UpdateGrupo",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveGrupo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "DeleteGrupo",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/casamentos/{casamentoId}/grupos/{id}/representante": {
+      "put": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "SetGrupoRepresentative",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetRepresentative"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/casamentos/{casamentoId}/convidados": {
+      "post": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "CreateConvidado",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveConvidado"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConvidadoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/casamentos/{casamentoId}/convidados/{id}": {
+      "put": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "UpdateConvidado",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveConvidado"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "DeleteConvidado",
+        "parameters": [
+          {
+            "name": "casamentoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/status": {
       "get": {
         "tags": [
@@ -396,6 +701,45 @@
           }
         }
       },
+      "ConvidadoResponse": {
+        "required": [
+          "id",
+          "groupId",
+          "name",
+          "email",
+          "phone",
+          "isRepresentative"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isRepresentative": {
+            "type": "boolean"
+          }
+        }
+      },
       "EventoResponse": {
         "required": [
           "id",
@@ -450,6 +794,39 @@
           }
         }
       },
+      "GrupoResponse": {
+        "required": [
+          "id",
+          "name",
+          "displayName",
+          "members"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConvidadoResponse"
+            }
+          }
+        }
+      },
       "SaveCasamento": {
         "required": [
           "coupleName",
@@ -474,6 +851,39 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "SaveConvidado": {
+        "required": [
+          "name",
+          "email",
+          "phone",
+          "groupId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "groupId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -506,6 +916,32 @@
               "string"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "SaveGrupo": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SetRepresentative": {
+        "required": [
+          "guestId"
+        ],
+        "type": "object",
+        "properties": {
+          "guestId": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       }

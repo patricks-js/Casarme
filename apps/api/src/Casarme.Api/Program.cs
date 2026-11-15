@@ -1,4 +1,5 @@
 using Casarme.Api.Casamentos;
+using Casarme.Api.Convidados;
 using Casarme.Api.Data;
 using Casarme.Api.Eventos;
 using Casarme.Api.Status;
@@ -40,6 +41,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapCasamentos();
 app.MapEventos();
+app.MapConvidados();
 app.MapOpenApi();
 app.MapHealthChecks("/health");
 app.MapStatus();
