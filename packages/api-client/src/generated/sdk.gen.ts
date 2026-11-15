@@ -4,8 +4,8 @@ import * as z from 'zod';
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetStatusData, GetStatusResponses } from './types.gen';
-import { zGetStatusResponse } from './zod.gen';
+import type { CreateCasamentoData, CreateCasamentoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, UpdateCasamentoData, UpdateCasamentoResponses } from './types.gen';
+import { zCreateCasamentoBody, zCreateCasamentoResponse, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
   /**
@@ -20,6 +20,58 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
    */
   meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+export const getCurrentCasamento = <ThrowOnError extends boolean = false>(options?: Options<GetCurrentCasamentoData, ThrowOnError>): RequestResult<GetCurrentCasamentoResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetCurrentCasamentoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zGetCurrentCasamentoResponse.parseAsync(data),
+  url: '/casamentos/current',
+  ...options
+});
+
+export const getCasamento = <ThrowOnError extends boolean = false>(options: Options<GetCasamentoData, ThrowOnError>): RequestResult<GetCasamentoResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetCasamentoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zGetCasamentoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zGetCasamentoResponse.parseAsync(data),
+  url: '/casamentos/{id}',
+  ...options
+});
+
+export const updateCasamento = <ThrowOnError extends boolean = false>(options: Options<UpdateCasamentoData, ThrowOnError>): RequestResult<UpdateCasamentoResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateCasamentoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zUpdateCasamentoBody,
+    path: zUpdateCasamentoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zUpdateCasamentoResponse.parseAsync(data),
+  url: '/casamentos/{id}',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const createCasamento = <ThrowOnError extends boolean = false>(options: Options<CreateCasamentoData, ThrowOnError>): RequestResult<CreateCasamentoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateCasamentoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zCreateCasamentoBody,
+    path: z.never().optional(),
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCreateCasamentoResponse.parseAsync(data),
+  url: '/casamentos',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
 
 export const getStatus = <ThrowOnError extends boolean = false>(options?: Options<GetStatusData, ThrowOnError>): RequestResult<GetStatusResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetStatusResponses, unknown, ThrowOnError>({
   requestValidator: async (data) => await z.object({

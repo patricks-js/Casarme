@@ -10,6 +10,90 @@ export type ApiStatus = {
   now: string;
 };
 
+export type CasamentoResponse = {
+  id: string;
+  coupleName: string;
+  date: string;
+  identifier: string;
+  timeZone: string;
+  principalEventId: string;
+};
+
+export type SaveCasamento = {
+  coupleName: string;
+  date: string;
+  identifier: string;
+  timeZone: null | string;
+};
+
+export type GetCurrentCasamentoData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/casamentos/current';
+};
+
+export type GetCurrentCasamentoResponses = {
+  /**
+   * OK
+   */
+  200: CasamentoResponse;
+};
+
+export type GetCurrentCasamentoResponse = GetCurrentCasamentoResponses[keyof GetCurrentCasamentoResponses];
+
+export type GetCasamentoData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{id}';
+};
+
+export type GetCasamentoResponses = {
+  /**
+   * OK
+   */
+  200: CasamentoResponse;
+};
+
+export type GetCasamentoResponse = GetCasamentoResponses[keyof GetCasamentoResponses];
+
+export type UpdateCasamentoData = {
+  body: SaveCasamento;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{id}';
+};
+
+export type UpdateCasamentoResponses = {
+  /**
+   * OK
+   */
+  200: CasamentoResponse;
+};
+
+export type UpdateCasamentoResponse = UpdateCasamentoResponses[keyof UpdateCasamentoResponses];
+
+export type CreateCasamentoData = {
+  body: SaveCasamento;
+  path?: never;
+  query?: never;
+  url: '/casamentos';
+};
+
+export type CreateCasamentoResponses = {
+  /**
+   * Created
+   */
+  201: CasamentoResponse;
+};
+
+export type CreateCasamentoResponse = CreateCasamentoResponses[keyof CreateCasamentoResponses];
+
 export type GetStatusData = {
   body?: never;
   path?: never;

@@ -5,6 +5,126 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/casamentos/current": {
+      "get": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "GetCurrentCasamento",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CasamentoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/casamentos/{id}": {
+      "get": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "GetCasamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CasamentoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "UpdateCasamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveCasamento"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CasamentoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/casamentos": {
+      "post": {
+        "tags": [
+          "Casarme.Api"
+        ],
+        "operationId": "CreateCasamento",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveCasamento"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CasamentoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/status": {
       "get": {
         "tags": [
@@ -47,10 +167,74 @@
             "format": "date-time"
           }
         }
+      },
+      "CasamentoResponse": {
+        "required": [
+          "id",
+          "coupleName",
+          "date",
+          "identifier",
+          "timeZone",
+          "principalEventId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "coupleName": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "principalEventId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "SaveCasamento": {
+        "required": [
+          "coupleName",
+          "date",
+          "identifier",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "coupleName": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       }
     }
   },
   "tags": [
+    {
+      "name": "Casarme.Api"
+    },
     {
       "name": "Status"
     }

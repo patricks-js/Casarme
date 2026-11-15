@@ -8,6 +8,54 @@ export const zApiStatus = z.object({
   now: z.iso.datetime({ offset: true })
 });
 
+export const zCasamentoResponse = z.object({
+  id: z.uuid(),
+  coupleName: z.string(),
+  date: z.iso.date(),
+  identifier: z.string(),
+  timeZone: z.string(),
+  principalEventId: z.uuid()
+});
+
+export const zSaveCasamento = z.object({
+  coupleName: z.string(),
+  date: z.iso.date(),
+  identifier: z.string(),
+  timeZone: z.string().nullable()
+});
+
+/**
+ * OK
+ */
+export const zGetCurrentCasamentoResponse = zCasamentoResponse;
+
+export const zGetCasamentoPath = z.object({
+  id: z.uuid()
+});
+
+/**
+ * OK
+ */
+export const zGetCasamentoResponse = zCasamentoResponse;
+
+export const zUpdateCasamentoBody = zSaveCasamento;
+
+export const zUpdateCasamentoPath = z.object({
+  id: z.uuid()
+});
+
+/**
+ * OK
+ */
+export const zUpdateCasamentoResponse = zCasamentoResponse;
+
+export const zCreateCasamentoBody = zSaveCasamento;
+
+/**
+ * Created
+ */
+export const zCreateCasamentoResponse = zCasamentoResponse;
+
 /**
  * OK
  */
