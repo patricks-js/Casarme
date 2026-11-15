@@ -6,9 +6,13 @@ import { loadEventos, mutateEvento } from "#/lib/evento-server";
 export function Eventos({
   casamentoId,
   timeZone,
+  weddingDate,
+  onSaved,
 }: {
   casamentoId: string;
   timeZone: string;
+  weddingDate: string;
+  onSaved: () => Promise<void>;
 }) {
   const [events, setEvents] = useState<EventoResponse[]>([]);
   const [editing, setEditing] = useState<EventoResponse | null>(null);
@@ -25,7 +29,7 @@ export function Eventos({
   }
   useEffect(() => {
     refresh().catch(() => setErrors(["Não foi possível carregar os Eventos."]));
-  }, [casamentoId, timeZone]);
+  }, [casamentoId, timeZone, weddingDate]);
   function edit(value: EventoResponse | null) {
     setEditing(value);
     setName(value?.name ?? "");
@@ -64,6 +68,7 @@ export function Eventos({
       if (result.errors) setErrors(Object.values(result.errors).flat());
       else {
         await refresh();
+        await onSaved();
         edit(null);
         setMessage(
           action === "delete"

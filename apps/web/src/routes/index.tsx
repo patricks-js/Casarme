@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
 import { Eventos } from "#/components/eventos";
 import { loadCasamento, saveCasamento } from "#/lib/casamento-server";
@@ -30,6 +30,9 @@ function Home() {
   const [timeZone, setTimeZone] = useState(
     casamento?.timeZone ?? "America/Sao_Paulo",
   );
+  useEffect(() => {
+    setDate(casamento?.date ?? "");
+  }, [casamento?.date]);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -127,7 +130,12 @@ function Home() {
         {saved && <p role="status">Casamento salvo.</p>}
       </form>
       {casamento && (
-        <Eventos casamentoId={casamento.id} timeZone={casamento.timeZone} />
+        <Eventos
+          casamentoId={casamento.id}
+          timeZone={casamento.timeZone}
+          weddingDate={casamento.date}
+          onSaved={() => router.invalidate()}
+        />
       )}
     </main>
   );
