@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createCasamento, getCasamento, getCurrentCasamento, getStatus, type Options, updateCasamento } from '../sdk.gen';
-import type { CreateCasamentoData, CreateCasamentoResponse, GetCasamentoData, GetCasamentoResponse, GetCurrentCasamentoData, GetCurrentCasamentoResponse, GetStatusData, GetStatusResponse, UpdateCasamentoData, UpdateCasamentoResponse } from '../types.gen';
+import { createCasamento, createConvidado, createGrupo, deleteConvidado, deleteGrupo, getCasamento, getCurrentCasamento, getStatus, listGrupos, type Options, setGrupoRepresentative, updateCasamento, updateConvidado, updateGrupo } from '../sdk.gen';
+import type { CreateCasamentoData, CreateCasamentoResponse, CreateConvidadoData, CreateConvidadoResponse, CreateGrupoData, CreateGrupoResponse, DeleteConvidadoData, DeleteGrupoData, GetCasamentoData, GetCasamentoResponse, GetCurrentCasamentoData, GetCurrentCasamentoResponse, GetStatusData, GetStatusResponse, ListGruposData, ListGruposResponse, SetGrupoRepresentativeData, UpdateCasamentoData, UpdateCasamentoResponse, UpdateConvidadoData, UpdateGrupoData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
   Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -87,6 +87,119 @@ export const createCasamentoMutation = (options?: Partial<Options<CreateCasament
   const mutationOptions: UseMutationOptions<CreateCasamentoResponse, DefaultError, Options<CreateCasamentoData>> = {
     mutationFn: async (fnOptions) => {
       const { data } = await createCasamento({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const listGruposQueryKey = (options: Options<ListGruposData>) => createQueryKey('listGrupos', options);
+
+export const listGruposOptions = (options: Options<ListGruposData>) => queryOptions<ListGruposResponse, DefaultError, ListGruposResponse, ReturnType<typeof listGruposQueryKey>>({
+  queryFn: async ({ queryKey, signal }) => {
+    const { data } = await listGrupos({
+      ...options,
+      ...queryKey[0],
+      signal,
+      throwOnError: true
+    });
+    return data;
+  },
+  queryKey: listGruposQueryKey(options)
+});
+
+export const createGrupoMutation = (options?: Partial<Options<CreateGrupoData>>): UseMutationOptions<CreateGrupoResponse, DefaultError, Options<CreateGrupoData>> => {
+  const mutationOptions: UseMutationOptions<CreateGrupoResponse, DefaultError, Options<CreateGrupoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createGrupo({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const deleteGrupoMutation = (options?: Partial<Options<DeleteGrupoData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteGrupoData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteGrupoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteGrupo({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const updateGrupoMutation = (options?: Partial<Options<UpdateGrupoData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateGrupoData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateGrupoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await updateGrupo({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const setGrupoRepresentativeMutation = (options?: Partial<Options<SetGrupoRepresentativeData>>): UseMutationOptions<unknown, DefaultError, Options<SetGrupoRepresentativeData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetGrupoRepresentativeData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await setGrupoRepresentative({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const createConvidadoMutation = (options?: Partial<Options<CreateConvidadoData>>): UseMutationOptions<CreateConvidadoResponse, DefaultError, Options<CreateConvidadoData>> => {
+  const mutationOptions: UseMutationOptions<CreateConvidadoResponse, DefaultError, Options<CreateConvidadoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createConvidado({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const deleteConvidadoMutation = (options?: Partial<Options<DeleteConvidadoData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteConvidadoData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteConvidadoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteConvidado({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const updateConvidadoMutation = (options?: Partial<Options<UpdateConvidadoData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateConvidadoData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateConvidadoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await updateConvidado({
         ...options,
         ...fnOptions,
         throwOnError: true

@@ -4,8 +4,8 @@ import * as z from 'zod';
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateCasamentoData, CreateCasamentoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, UpdateCasamentoData, UpdateCasamentoResponses } from './types.gen';
-import { zCreateCasamentoBody, zCreateCasamentoResponse, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse } from './zod.gen';
+import type { CreateCasamentoData, CreateCasamentoResponses, CreateConvidadoData, CreateConvidadoResponses, CreateGrupoData, CreateGrupoResponses, DeleteConvidadoData, DeleteConvidadoResponses, DeleteGrupoData, DeleteGrupoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, ListGruposData, ListGruposResponses, SetGrupoRepresentativeData, SetGrupoRepresentativeResponses, UpdateCasamentoData, UpdateCasamentoResponses, UpdateConvidadoData, UpdateConvidadoResponses, UpdateGrupoData, UpdateGrupoResponses } from './types.gen';
+import { zCreateCasamentoBody, zCreateCasamentoResponse, zCreateConvidadoBody, zCreateConvidadoPath, zCreateConvidadoResponse, zCreateGrupoBody, zCreateGrupoPath, zCreateGrupoResponse, zDeleteConvidadoPath, zDeleteGrupoPath, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zListGruposPath, zListGruposResponse, zSetGrupoRepresentativeBody, zSetGrupoRepresentativePath, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse, zUpdateConvidadoBody, zUpdateConvidadoPath, zUpdateGrupoBody, zUpdateGrupoPath } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
   /**
@@ -66,6 +66,109 @@ export const createCasamento = <ThrowOnError extends boolean = false>(options: O
   }).parseAsync(data),
   responseValidator: async (data) => await zCreateCasamentoResponse.parseAsync(data),
   url: '/casamentos',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const listGrupos = <ThrowOnError extends boolean = false>(options: Options<ListGruposData, ThrowOnError>): RequestResult<ListGruposResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListGruposResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zListGruposPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zListGruposResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos',
+  ...options
+});
+
+export const createGrupo = <ThrowOnError extends boolean = false>(options: Options<CreateGrupoData, ThrowOnError>): RequestResult<CreateGrupoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateGrupoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zCreateGrupoBody,
+    path: zCreateGrupoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCreateGrupoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const deleteGrupo = <ThrowOnError extends boolean = false>(options: Options<DeleteGrupoData, ThrowOnError>): RequestResult<DeleteGrupoResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteGrupoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zDeleteGrupoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos/{id}',
+  ...options
+});
+
+export const updateGrupo = <ThrowOnError extends boolean = false>(options: Options<UpdateGrupoData, ThrowOnError>): RequestResult<UpdateGrupoResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateGrupoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zUpdateGrupoBody,
+    path: zUpdateGrupoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos/{id}',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const setGrupoRepresentative = <ThrowOnError extends boolean = false>(options: Options<SetGrupoRepresentativeData, ThrowOnError>): RequestResult<SetGrupoRepresentativeResponses, unknown, ThrowOnError> => (options.client ?? client).put<SetGrupoRepresentativeResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zSetGrupoRepresentativeBody,
+    path: zSetGrupoRepresentativePath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/grupos/{id}/representante',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const createConvidado = <ThrowOnError extends boolean = false>(options: Options<CreateConvidadoData, ThrowOnError>): RequestResult<CreateConvidadoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateConvidadoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zCreateConvidadoBody,
+    path: zCreateConvidadoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCreateConvidadoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/convidados',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const deleteConvidado = <ThrowOnError extends boolean = false>(options: Options<DeleteConvidadoData, ThrowOnError>): RequestResult<DeleteConvidadoResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteConvidadoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zDeleteConvidadoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/convidados/{id}',
+  ...options
+});
+
+export const updateConvidado = <ThrowOnError extends boolean = false>(options: Options<UpdateConvidadoData, ThrowOnError>): RequestResult<UpdateConvidadoResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateConvidadoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zUpdateConvidadoBody,
+    path: zUpdateConvidadoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/convidados/{id}',
   ...options,
   headers: {
     'Content-Type': 'application/json',

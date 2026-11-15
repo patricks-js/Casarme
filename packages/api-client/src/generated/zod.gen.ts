@@ -17,11 +17,42 @@ export const zCasamentoResponse = z.object({
   principalEventId: z.uuid()
 });
 
+export const zConvidadoResponse = z.object({
+  id: z.uuid(),
+  groupId: z.uuid(),
+  name: z.string(),
+  email: z.string().nullable(),
+  phone: z.string().nullable(),
+  isRepresentative: z.boolean()
+});
+
+export const zGrupoResponse = z.object({
+  id: z.uuid(),
+  name: z.string().nullable(),
+  displayName: z.string().nullable(),
+  members: z.array(zConvidadoResponse)
+});
+
 export const zSaveCasamento = z.object({
   coupleName: z.string(),
   date: z.iso.date(),
   identifier: z.string(),
   timeZone: z.string().nullable()
+});
+
+export const zSaveConvidado = z.object({
+  name: z.string(),
+  email: z.string().nullable(),
+  phone: z.string().nullable(),
+  groupId: z.uuid().nullable()
+});
+
+export const zSaveGrupo = z.object({
+  name: z.string().nullable()
+});
+
+export const zSetRepresentative = z.object({
+  guestId: z.uuid()
 });
 
 /**
@@ -55,6 +86,68 @@ export const zCreateCasamentoBody = zSaveCasamento;
  * Created
  */
 export const zCreateCasamentoResponse = zCasamentoResponse;
+
+export const zListGruposPath = z.object({
+  casamentoId: z.uuid()
+});
+
+/**
+ * OK
+ */
+export const zListGruposResponse = z.array(zGrupoResponse);
+
+export const zCreateGrupoBody = zSaveGrupo;
+
+export const zCreateGrupoPath = z.object({
+  casamentoId: z.uuid()
+});
+
+/**
+ * Created
+ */
+export const zCreateGrupoResponse = zGrupoResponse;
+
+export const zDeleteGrupoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+export const zUpdateGrupoBody = zSaveGrupo;
+
+export const zUpdateGrupoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+export const zSetGrupoRepresentativeBody = zSetRepresentative;
+
+export const zSetGrupoRepresentativePath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+export const zCreateConvidadoBody = zSaveConvidado;
+
+export const zCreateConvidadoPath = z.object({
+  casamentoId: z.uuid()
+});
+
+/**
+ * Created
+ */
+export const zCreateConvidadoResponse = zConvidadoResponse;
+
+export const zDeleteConvidadoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+export const zUpdateConvidadoBody = zSaveConvidado;
+
+export const zUpdateConvidadoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
 
 /**
  * OK

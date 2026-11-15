@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 
+import { GuestManager } from "#/components/guest-manager";
 import { loadCasamento, saveCasamento } from "#/lib/casamento-server";
 
 export const Route = createFileRoute("/")({
@@ -125,6 +126,7 @@ function Home() {
         </button>
         {saved && <p role="status">Casamento salvo.</p>}
       </form>
+      {casamento && <GuestManager casamentoId={casamento.id!} />}
     </main>
   );
 }

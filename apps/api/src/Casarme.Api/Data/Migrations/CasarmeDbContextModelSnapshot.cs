@@ -128,6 +128,78 @@ namespace Casarme.Api.Data.Migrations
                     b.ToTable("Noivos", "app");
                 });
 
+            modelBuilder.Entity("Casarme.Api.Convidados.Convidado", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)");
+
+                    b.Property<Guid>("GrupoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsRepresentative")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("JoinedOrder")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrupoId");
+
+                    b.ToTable("Guests", "app");
+                });
+
+            modelBuilder.Entity("Casarme.Api.Convidados.Grupo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CasamentoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("NameKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CasamentoId", "NameKey")
+                        .IsUnique();
+
+                    b.ToTable("Groups", "app");
+                });
+
             modelBuilder.Entity("Casarme.Api.Casamentos.Evento", b =>
                 {
                     b.HasOne("Casarme.Api.Casamentos.Casamento", "Casamento")
@@ -150,11 +222,38 @@ namespace Casarme.Api.Data.Migrations
                     b.Navigation("Casamento");
                 });
 
+            modelBuilder.Entity("Casarme.Api.Convidados.Convidado", b =>
+                {
+                    b.HasOne("Casarme.Api.Convidados.Grupo", "Grupo")
+                        .WithMany("Members")
+                        .HasForeignKey("GrupoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Grupo");
+                });
+
+            modelBuilder.Entity("Casarme.Api.Convidados.Grupo", b =>
+                {
+                    b.HasOne("Casarme.Api.Casamentos.Casamento", "Casamento")
+                        .WithMany()
+                        .HasForeignKey("CasamentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Casamento");
+                });
+
             modelBuilder.Entity("Casarme.Api.Casamentos.Casamento", b =>
                 {
                     b.Navigation("Events");
 
                     b.Navigation("Noivos");
+                });
+
+            modelBuilder.Entity("Casarme.Api.Convidados.Grupo", b =>
+                {
+                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

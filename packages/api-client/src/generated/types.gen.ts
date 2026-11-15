@@ -19,11 +19,42 @@ export type CasamentoResponse = {
   principalEventId: string;
 };
 
+export type ConvidadoResponse = {
+  id: string;
+  groupId: string;
+  name: string;
+  email: null | string;
+  phone: null | string;
+  isRepresentative: boolean;
+};
+
+export type GrupoResponse = {
+  id: string;
+  name: null | string;
+  displayName: null | string;
+  members: Array<ConvidadoResponse>;
+};
+
 export type SaveCasamento = {
   coupleName: string;
   date: string;
   identifier: string;
   timeZone: null | string;
+};
+
+export type SaveConvidado = {
+  name: string;
+  email: null | string;
+  phone: null | string;
+  groupId: null | string;
+};
+
+export type SaveGrupo = {
+  name: null | string;
+};
+
+export type SetRepresentative = {
+  guestId: string;
 };
 
 export type GetCurrentCasamentoData = {
@@ -93,6 +124,145 @@ export type CreateCasamentoResponses = {
 };
 
 export type CreateCasamentoResponse = CreateCasamentoResponses[keyof CreateCasamentoResponses];
+
+export type ListGruposData = {
+  body?: never;
+  path: {
+    casamentoId: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/grupos';
+};
+
+export type ListGruposResponses = {
+  /**
+   * OK
+   */
+  200: Array<GrupoResponse>;
+};
+
+export type ListGruposResponse = ListGruposResponses[keyof ListGruposResponses];
+
+export type CreateGrupoData = {
+  body: SaveGrupo;
+  path: {
+    casamentoId: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/grupos';
+};
+
+export type CreateGrupoResponses = {
+  /**
+   * Created
+   */
+  201: GrupoResponse;
+};
+
+export type CreateGrupoResponse = CreateGrupoResponses[keyof CreateGrupoResponses];
+
+export type DeleteGrupoData = {
+  body?: never;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/grupos/{id}';
+};
+
+export type DeleteGrupoResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
+export type UpdateGrupoData = {
+  body: SaveGrupo;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/grupos/{id}';
+};
+
+export type UpdateGrupoResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
+export type SetGrupoRepresentativeData = {
+  body: SetRepresentative;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/grupos/{id}/representante';
+};
+
+export type SetGrupoRepresentativeResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
+export type CreateConvidadoData = {
+  body: SaveConvidado;
+  path: {
+    casamentoId: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/convidados';
+};
+
+export type CreateConvidadoResponses = {
+  /**
+   * Created
+   */
+  201: ConvidadoResponse;
+};
+
+export type CreateConvidadoResponse = CreateConvidadoResponses[keyof CreateConvidadoResponses];
+
+export type DeleteConvidadoData = {
+  body?: never;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/convidados/{id}';
+};
+
+export type DeleteConvidadoResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
+export type UpdateConvidadoData = {
+  body: SaveConvidado;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/convidados/{id}';
+};
+
+export type UpdateConvidadoResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
 
 export type GetStatusData = {
   body?: never;

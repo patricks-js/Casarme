@@ -26,8 +26,8 @@ public class CasamentoTests : IAsyncLifetime
     private readonly string _directory = Path.Combine(Path.GetTempPath(), "casarme-jwt-" + Guid.NewGuid());
     private readonly string _secretId = "casarme-tests-" + Guid.NewGuid();
     private WebApplicationFactory<Program> _factory = null!;
-    private string _firstToken = "";
-    private string _secondToken = "";
+    protected string _firstToken = "";
+    protected string _secondToken = "";
     public async Task InitializeAsync()
     {
         Directory.CreateDirectory(_directory);
@@ -57,9 +57,10 @@ public class CasamentoTests : IAsyncLifetime
         var error = await process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync();
         Assert.True(process.ExitCode == 0, error);
+        Assert.False(string.IsNullOrWhiteSpace(output), "dotnet user-jwts returned an empty token: " + error);
         return output.Trim();
     }
-    private HttpClient Client(string? token)
+    protected HttpClient Client(string? token)
     {
         var client = _factory.CreateClient();
         if (token is not null) client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -129,7 +130,10 @@ public class CasamentoTests : IAsyncLifetime
     {
         if (_factory is not null) await _factory.DisposeAsync(); await _postgres.DisposeAsync(); Directory.Delete(_directory, true);
         // Remove only this fixture's development signing key.
-        var secretPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".microsoft", "usersecrets", _secretId);
+        var appData = Environment.GetEnvironmentVariable("APPDATA");
+        var secretPath = string.IsNullOrEmpty(appData)
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".microsoft", "usersecrets", _secretId)
+            : Path.Combine(appData, "Microsoft", "UserSecrets", _secretId);
         if (Directory.Exists(secretPath)) Directory.Delete(secretPath, true);
     }
 }

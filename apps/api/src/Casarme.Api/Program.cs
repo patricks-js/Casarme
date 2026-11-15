@@ -1,4 +1,5 @@
 using Casarme.Api.Casamentos;
+using Casarme.Api.Convidados;
 using Casarme.Api.Data;
 using Casarme.Api.Status;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +39,7 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCasamentos();
+app.MapConvidados();
 app.MapOpenApi();
 app.MapHealthChecks("/health");
 app.MapStatus();
