@@ -4,8 +4,8 @@ import * as z from 'zod';
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateCasamentoData, CreateCasamentoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, UpdateCasamentoData, UpdateCasamentoResponses } from './types.gen';
-import { zCreateCasamentoBody, zCreateCasamentoResponse, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse } from './zod.gen';
+import type { CancelEventoData, CancelEventoResponses, CreateCasamentoData, CreateCasamentoResponses, CreateEventoData, CreateEventoResponses, DeleteEventoData, DeleteEventoResponses, GetCasamentoData, GetCasamentoResponses, GetCurrentCasamentoData, GetCurrentCasamentoResponses, GetStatusData, GetStatusResponses, ListEventosData, ListEventosResponses, UpdateCasamentoData, UpdateCasamentoResponses, UpdateEventoData, UpdateEventoResponses } from './types.gen';
+import { zCancelEventoPath, zCancelEventoResponse, zCreateCasamentoBody, zCreateCasamentoResponse, zCreateEventoBody, zCreateEventoPath, zCreateEventoResponse, zDeleteEventoPath, zGetCasamentoPath, zGetCasamentoResponse, zGetCurrentCasamentoResponse, zGetStatusResponse, zListEventosPath, zListEventosResponse, zUpdateCasamentoBody, zUpdateCasamentoPath, zUpdateCasamentoResponse, zUpdateEventoBody, zUpdateEventoPath, zUpdateEventoResponse } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
   /**
@@ -71,6 +71,68 @@ export const createCasamento = <ThrowOnError extends boolean = false>(options: O
     'Content-Type': 'application/json',
     ...options.headers
   }
+});
+
+export const listEventos = <ThrowOnError extends boolean = false>(options: Options<ListEventosData, ThrowOnError>): RequestResult<ListEventosResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListEventosResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zListEventosPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zListEventosResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/eventos',
+  ...options
+});
+
+export const createEvento = <ThrowOnError extends boolean = false>(options: Options<CreateEventoData, ThrowOnError>): RequestResult<CreateEventoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateEventoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zCreateEventoBody,
+    path: zCreateEventoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCreateEventoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/eventos',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const deleteEvento = <ThrowOnError extends boolean = false>(options: Options<DeleteEventoData, ThrowOnError>): RequestResult<DeleteEventoResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteEventoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zDeleteEventoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  url: '/casamentos/{casamentoId}/eventos/{id}',
+  ...options
+});
+
+export const updateEvento = <ThrowOnError extends boolean = false>(options: Options<UpdateEventoData, ThrowOnError>): RequestResult<UpdateEventoResponses, unknown, ThrowOnError> => (options.client ?? client).put<UpdateEventoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: zUpdateEventoBody,
+    path: zUpdateEventoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zUpdateEventoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/eventos/{id}',
+  ...options,
+  headers: {
+    'Content-Type': 'application/json',
+    ...options.headers
+  }
+});
+
+export const cancelEvento = <ThrowOnError extends boolean = false>(options: Options<CancelEventoData, ThrowOnError>): RequestResult<CancelEventoResponses, unknown, ThrowOnError> => (options.client ?? client).post<CancelEventoResponses, unknown, ThrowOnError>({
+  requestValidator: async (data) => await z.object({
+    body: z.never().optional(),
+    path: zCancelEventoPath,
+    query: z.never().optional()
+  }).parseAsync(data),
+  responseValidator: async (data) => await zCancelEventoResponse.parseAsync(data),
+  url: '/casamentos/{casamentoId}/eventos/{id}/cancel',
+  ...options
 });
 
 export const getStatus = <ThrowOnError extends boolean = false>(options?: Options<GetStatusData, ThrowOnError>): RequestResult<GetStatusResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetStatusResponses, unknown, ThrowOnError>({

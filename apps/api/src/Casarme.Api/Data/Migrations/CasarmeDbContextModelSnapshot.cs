@@ -63,18 +63,33 @@ namespace Casarme.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("CasamentoId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("HasReception")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsPrincipal")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("RsvpDeadline")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("StartsAt")
                         .HasColumnType("timestamp without time zone");

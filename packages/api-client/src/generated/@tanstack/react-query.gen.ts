@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createCasamento, getCasamento, getCurrentCasamento, getStatus, type Options, updateCasamento } from '../sdk.gen';
-import type { CreateCasamentoData, CreateCasamentoResponse, GetCasamentoData, GetCasamentoResponse, GetCurrentCasamentoData, GetCurrentCasamentoResponse, GetStatusData, GetStatusResponse, UpdateCasamentoData, UpdateCasamentoResponse } from '../types.gen';
+import { cancelEvento, createCasamento, createEvento, deleteEvento, getCasamento, getCurrentCasamento, getStatus, listEventos, type Options, updateCasamento, updateEvento } from '../sdk.gen';
+import type { CancelEventoData, CancelEventoResponse, CreateCasamentoData, CreateCasamentoResponse, CreateEventoData, CreateEventoResponse, DeleteEventoData, GetCasamentoData, GetCasamentoResponse, GetCurrentCasamentoData, GetCurrentCasamentoResponse, GetStatusData, GetStatusResponse, ListEventosData, ListEventosResponse, UpdateCasamentoData, UpdateCasamentoResponse, UpdateEventoData, UpdateEventoResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
   Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -87,6 +87,77 @@ export const createCasamentoMutation = (options?: Partial<Options<CreateCasament
   const mutationOptions: UseMutationOptions<CreateCasamentoResponse, DefaultError, Options<CreateCasamentoData>> = {
     mutationFn: async (fnOptions) => {
       const { data } = await createCasamento({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const listEventosQueryKey = (options: Options<ListEventosData>) => createQueryKey('listEventos', options);
+
+export const listEventosOptions = (options: Options<ListEventosData>) => queryOptions<ListEventosResponse, DefaultError, ListEventosResponse, ReturnType<typeof listEventosQueryKey>>({
+  queryFn: async ({ queryKey, signal }) => {
+    const { data } = await listEventos({
+      ...options,
+      ...queryKey[0],
+      signal,
+      throwOnError: true
+    });
+    return data;
+  },
+  queryKey: listEventosQueryKey(options)
+});
+
+export const createEventoMutation = (options?: Partial<Options<CreateEventoData>>): UseMutationOptions<CreateEventoResponse, DefaultError, Options<CreateEventoData>> => {
+  const mutationOptions: UseMutationOptions<CreateEventoResponse, DefaultError, Options<CreateEventoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createEvento({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const deleteEventoMutation = (options?: Partial<Options<DeleteEventoData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteEventoData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteEventoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteEvento({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const updateEventoMutation = (options?: Partial<Options<UpdateEventoData>>): UseMutationOptions<UpdateEventoResponse, DefaultError, Options<UpdateEventoData>> => {
+  const mutationOptions: UseMutationOptions<UpdateEventoResponse, DefaultError, Options<UpdateEventoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await updateEvento({
+        ...options,
+        ...fnOptions,
+        throwOnError: true
+      });
+      return data;
+    }
+  };
+  return mutationOptions;
+};
+
+export const cancelEventoMutation = (options?: Partial<Options<CancelEventoData>>): UseMutationOptions<CancelEventoResponse, DefaultError, Options<CancelEventoData>> => {
+  const mutationOptions: UseMutationOptions<CancelEventoResponse, DefaultError, Options<CancelEventoData>> = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await cancelEvento({
         ...options,
         ...fnOptions,
         throwOnError: true

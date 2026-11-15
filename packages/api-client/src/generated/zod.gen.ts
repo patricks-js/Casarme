@@ -5,7 +5,7 @@ import * as z from 'zod';
 export const zApiStatus = z.object({
   service: z.string(),
   environment: z.string(),
-  now: z.iso.datetime({ offset: true })
+  now: z.iso.datetime({ offset: true, local: true })
 });
 
 export const zCasamentoResponse = z.object({
@@ -17,11 +17,32 @@ export const zCasamentoResponse = z.object({
   principalEventId: z.uuid()
 });
 
+export const zEventoResponse = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  startsAt: z.iso.datetime({ offset: true, local: true }),
+  location: z.string(),
+  hasReception: z.boolean(),
+  rsvpDeadline: z.iso.datetime({ offset: true, local: true }).nullable(),
+  effectiveRsvpDeadline: z.iso.datetime({ offset: true, local: true }),
+  isPrincipal: z.boolean(),
+  status: z.string(),
+  timeZone: z.string()
+});
+
 export const zSaveCasamento = z.object({
   coupleName: z.string(),
   date: z.iso.date(),
   identifier: z.string(),
   timeZone: z.string().nullable()
+});
+
+export const zSaveEvento = z.object({
+  name: z.string(),
+  startsAt: z.iso.datetime({ offset: true, local: true }),
+  location: z.string(),
+  hasReception: z.boolean(),
+  rsvpDeadline: z.iso.datetime({ offset: true, local: true }).nullable()
 });
 
 /**
@@ -55,6 +76,53 @@ export const zCreateCasamentoBody = zSaveCasamento;
  * Created
  */
 export const zCreateCasamentoResponse = zCasamentoResponse;
+
+export const zListEventosPath = z.object({
+  casamentoId: z.uuid()
+});
+
+/**
+ * OK
+ */
+export const zListEventosResponse = z.array(zEventoResponse);
+
+export const zCreateEventoBody = zSaveEvento;
+
+export const zCreateEventoPath = z.object({
+  casamentoId: z.uuid()
+});
+
+/**
+ * Created
+ */
+export const zCreateEventoResponse = zEventoResponse;
+
+export const zDeleteEventoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+export const zUpdateEventoBody = zSaveEvento;
+
+export const zUpdateEventoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+/**
+ * OK
+ */
+export const zUpdateEventoResponse = zEventoResponse;
+
+export const zCancelEventoPath = z.object({
+  casamentoId: z.uuid(),
+  id: z.uuid()
+});
+
+/**
+ * OK
+ */
+export const zCancelEventoResponse = zEventoResponse;
 
 /**
  * OK

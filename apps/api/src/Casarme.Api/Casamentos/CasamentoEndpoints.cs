@@ -58,7 +58,7 @@ public static class CasamentoEndpoints
             value.CoupleName = request.CoupleName.Trim(); value.Identifier = request.Identifier;
             value.TimeZone = request.TimeZone ?? "America/Sao_Paulo"; value.UpdatedAt = clock.GetUtcNow();
             var principal = value.Events.Single(x => x.IsPrincipal);
-            principal.StartsAt = request.Date.ToDateTime(TimeOnly.MinValue); principal.UpdatedAt = clock.GetUtcNow();
+            principal.StartsAt = request.Date.ToDateTime(TimeOnly.FromDateTime(principal.StartsAt)); principal.UpdatedAt = clock.GetUtcNow();
             UpdateProfile(noivo, user, clock);
             try { await db.SaveChangesAsync(); }
             catch (DbUpdateException e) when (e.InnerException is PostgresException { SqlState: "23505" }) { return IdentifierConflict(); }

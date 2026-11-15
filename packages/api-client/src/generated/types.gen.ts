@@ -19,11 +19,32 @@ export type CasamentoResponse = {
   principalEventId: string;
 };
 
+export type EventoResponse = {
+  id: string;
+  name: string;
+  startsAt: string;
+  location: string;
+  hasReception: boolean;
+  rsvpDeadline: null | string;
+  effectiveRsvpDeadline: string;
+  isPrincipal: boolean;
+  status: string;
+  timeZone: string;
+};
+
 export type SaveCasamento = {
   coupleName: string;
   date: string;
   identifier: string;
   timeZone: null | string;
+};
+
+export type SaveEvento = {
+  name: string;
+  startsAt: string;
+  location: string;
+  hasReception: boolean;
+  rsvpDeadline: null | string;
 };
 
 export type GetCurrentCasamentoData = {
@@ -93,6 +114,97 @@ export type CreateCasamentoResponses = {
 };
 
 export type CreateCasamentoResponse = CreateCasamentoResponses[keyof CreateCasamentoResponses];
+
+export type ListEventosData = {
+  body?: never;
+  path: {
+    casamentoId: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/eventos';
+};
+
+export type ListEventosResponses = {
+  /**
+   * OK
+   */
+  200: Array<EventoResponse>;
+};
+
+export type ListEventosResponse = ListEventosResponses[keyof ListEventosResponses];
+
+export type CreateEventoData = {
+  body: SaveEvento;
+  path: {
+    casamentoId: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/eventos';
+};
+
+export type CreateEventoResponses = {
+  /**
+   * Created
+   */
+  201: EventoResponse;
+};
+
+export type CreateEventoResponse = CreateEventoResponses[keyof CreateEventoResponses];
+
+export type DeleteEventoData = {
+  body?: never;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/eventos/{id}';
+};
+
+export type DeleteEventoResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
+export type UpdateEventoData = {
+  body: SaveEvento;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/eventos/{id}';
+};
+
+export type UpdateEventoResponses = {
+  /**
+   * OK
+   */
+  200: EventoResponse;
+};
+
+export type UpdateEventoResponse = UpdateEventoResponses[keyof UpdateEventoResponses];
+
+export type CancelEventoData = {
+  body?: never;
+  path: {
+    casamentoId: string;
+    id: string;
+  };
+  query?: never;
+  url: '/casamentos/{casamentoId}/eventos/{id}/cancel';
+};
+
+export type CancelEventoResponses = {
+  /**
+   * OK
+   */
+  200: EventoResponse;
+};
+
+export type CancelEventoResponse = CancelEventoResponses[keyof CancelEventoResponses];
 
 export type GetStatusData = {
   body?: never;
